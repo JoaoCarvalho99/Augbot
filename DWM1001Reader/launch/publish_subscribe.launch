@@ -1,0 +1,11 @@
+<launch>
+
+  <group ns="publisher">
+    <node pkg="DWM1001Reader" name="sim" type="localization_improved_publisher"/>
+  </group>
+
+  <group ns="subscriber">
+    <node pkg="DWM1001Reader" name="sim" type="localization_listener"/>
+  </group>
+
+</launch>
