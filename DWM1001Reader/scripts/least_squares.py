@@ -16,7 +16,7 @@ zi = []
 ri = []
 initial_guess = []
 
-
+#equation for 3 exactly anchors
 def equations ( guess ):
     x, y , z = guess
 
@@ -32,8 +32,8 @@ def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "[%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z)
     nAnchors = 0
     for anchor in data.anchors:
-        if anchor.ID == "":
-            if nAnchors > 2:
+        if data.nAnchors == nAnchors:
+            if nAnchors == 3:
                 results = least_squares(equations, initial_guess)
                 print( results )
                 rospy.loginfo("LEAST_SQUARE [%f,%f,%f]", results.x[0], results.x[1], results.x[2] )
