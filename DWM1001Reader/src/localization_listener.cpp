@@ -6,7 +6,7 @@
 //chamado quando recebe uma nova mensagem no topico chatter
 void chatterCallback(const DWM1001Reader::tagFull::ConstPtr& msg)
 {
-  ROS_INFO("I heard: [%f,%f,%f]", msg->estimative.position.x, msg->estimative.position.y, msg->estimative.position.z );
+  ROS_INFO("I heard: [%f,%f,%f]", msg->estimate.position.x, msg->estimate.position.y, msg->estimate.position.z );
 }
 
 int main(int argc, char **argv)

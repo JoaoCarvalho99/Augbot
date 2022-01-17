@@ -10,17 +10,18 @@
 
 void make_estimateMsg ( DWM1001Reader::tagFull* tagFullMsg, std::string args[] )
 {
-    tagFullMsg->estimative.timestamp = std::time(nullptr);;
-    tagFullMsg->estimative.le_us = std::stoi(args[1]);
+    tagFullMsg->estimate.timestamp = std::time(nullptr);;
+    tagFullMsg->estimate.le_us = std::stoi(args[1]);
 }
 
 void make_finalMsg ( DWM1001Reader::tagFull* tagFullMsg, std::string args[] )
 {
-    tagFullMsg->estimative.position.x = std::stod(args[1]);
-    tagFullMsg->estimative.position.y = std::stod(args[2]);
-    tagFullMsg->estimative.position.z = std::stod(args[3]);
-    tagFullMsg->estimative.accuracy = std::stoi(args[4]);
+    tagFullMsg->estimate.position.x = std::stod(args[1]);
+    tagFullMsg->estimate.position.y = std::stod(args[2]);
+    tagFullMsg->estimate.position.z = std::stod(args[3]);
+    tagFullMsg->estimate.accuracy = std::stoi(args[4]);
     tagFullMsg->timestamp = std::time(nullptr);
+    tagFullMsg->estimate.valid = true;
 }
 
 void make_AnchorMsg ( DWM1001Reader::tagFull* tagFullMsg, std::string args[], int nAnchor )
@@ -32,7 +33,8 @@ void make_AnchorMsg ( DWM1001Reader::tagFull* tagFullMsg, std::string args[], in
     anchorMsg.position.y = std::stod(args[2]);  
     anchorMsg.position.z = std::stod(args[3]);  
     anchorMsg.range = std::stod(args[4]);       
-    tagFullMsg->anchors[nAnchor] = anchorMsg;   
+    tagFullMsg->anchors[nAnchor] = anchorMsg;
+    tagFullMsg->nAnchors = nAnchor;
 }
 
 int parser( std::string input, DWM1001Reader::tagFull* tagFullMsg, int nAnchor )
@@ -77,13 +79,7 @@ DWM1001Reader::tagFull parser( std::string input )
     {
       pos = input.find_first_of(delims, beg + 1);
       flag = parser ( input.substr(beg, pos - beg), &tagFullMsg, i++ );
-      if ( flag == 1 )
-      {
-        tagFullMsg.success = flag;
-        return tagFullMsg;
-      }
     }
-    tagFullMsg.success = flag;
     return tagFullMsg;
 }
 
@@ -91,31 +87,27 @@ DWM1001Reader::tagFull parser( std::string input )
 int main(int argc, char **argv)
 {
 
+    printf("%d\n",argc);
+
     ros::init(argc, argv, "talker");
 
     ros::NodeHandle n;
 
     ros::Publisher chatter_pub = n.advertise<DWM1001Reader::tagFull>("localization", 1000);
 
-    std::string str;
     std::string stdIn = "/dev/ttyACM0";
+
+    if ( argc > 1 )
+        stdIn = argv[1];
+    
     serial::Serial ser;
     std::string input = "";
 
-/*
-    std::cout << "Enter port to be read:\nEnter to use [default]: /dev/ttyACM0\n";
-    getline(std::cin, input);
-
-    if ( input != "" )
-    {
-        stdIn = input;
-    }
-*/
 
     try
     {
         ser.setPort(stdIn);
-        ser.setBaudrate(115200); //testar novo baudrate
+        ser.setBaudrate(115200);
         serial::Timeout to = serial::Timeout::simpleTimeout(1000);
         ser.setTimeout(to);
         ser.open();
@@ -133,7 +125,6 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    std::string test = "";
 
     while ( ros::ok() && ser.isOpen() )
     {
@@ -141,20 +132,20 @@ int main(int argc, char **argv)
        while ( ser.available() )
        {
 
-            test.append( ser.readline() );
+            input.append( ser.readline() );
 
         }
 
-        if ( test != "" ){
+        if ( input != "" ){
 
-            ROS_INFO("%s", test.c_str());
+            ROS_INFO("%s", input.c_str());
 
-            DWM1001Reader::tagFull tagFullMsg = parser ( test );
+            DWM1001Reader::tagFull tagFullMsg = parser ( input );
 
-            if ( tagFullMsg.success )
+            if ( tagFullMsg.estimate.valid )
                 chatter_pub.publish ( tagFullMsg );
 
-            test = "";
+            input = "";
 
         }
 

@@ -80,7 +80,7 @@ int main(int argc, char **argv)
       estimateMsg.position.z = std::stod(args[3]);
       estimateMsg.accuracy = std::stoi(args[4]);
       tagFullMsg.timestamp = std::time(nullptr);;
-      tagFullMsg.estimative = estimateMsg;
+      tagFullMsg.estimate = estimateMsg;
       chatter_pub.publish(tagFullMsg);
       tagFullMsg = DWM1001Reader::tagFull();
       nAnchor = 0;
