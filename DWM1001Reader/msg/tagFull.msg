@@ -1,4 +1,4 @@
 float64 timestamp
 anchor[10] anchors
-estimate estimative
-int32 success
+estimate estimate
+uint8 nAnchors
