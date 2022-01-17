@@ -1,18 +1,8 @@
 #!/usr/bin/env python
 import rospy
-import paho.mqtt.client as paho
 
-broker = "192.168.1.249"
-port = 1883
+import pub from 
 
-def on_publish ( client, userdata, result ):
-    print("data published\n")
-    pass
-
-client1 = paho.Client("control1")
-client1.on_publish = on_publish
-client1.connect(broker, port)
-ret = client1.publish("house/bulb1","on")
 
 #Example code: MQTT
 #import paho.mqtt.client as paho

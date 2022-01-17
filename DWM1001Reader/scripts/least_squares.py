@@ -6,6 +6,10 @@ from std_msgs.msg import String
 from DWM1001Reader.msg import tagFull
 
 
+
+
+
+
 xi = []
 yi = []
 zi = []
@@ -25,7 +29,7 @@ def equations ( guess ):
 
 
 def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + "[%f,%f,%f]", data.estimative.position.x,data.estimative.position.y,data.estimative.position.z)
+    rospy.loginfo(rospy.get_caller_id() + "[%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z)
     nAnchors = 0
     for anchor in data.anchors:
         if anchor.ID == "":
@@ -33,7 +37,7 @@ def callback(data):
                 results = least_squares(equations, initial_guess)
                 print( results )
                 rospy.loginfo("LEAST_SQUARE [%f,%f,%f]", results.x[0], results.x[1], results.x[2] )
-                rospy.loginfo("DECAWAVE [%f,%f,%f]", data.estimative.position.x,data.estimative.position.y,data.estimative.position.z )
+                rospy.loginfo("DECAWAVE [%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z )
                 return results.x
             xi.clear()
             yi.clear()
