@@ -1,0 +1,7 @@
+<launch>
+  <arg name="use_tls" default="false" />
+  <node name="rosmqtt" pkg="Augbot" type="rosmqtt_node.py" output="screen">
+    <rosparam command="load" file="$(find Augbot)/config/mqtt_params.yaml" />
+    <rosparam if="$(arg use_tls)" command="load" ns="mqtt" file="$(find Augbot)/config/tls_params.yaml" />
+  </node>
+</launch>
