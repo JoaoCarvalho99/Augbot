@@ -8,12 +8,43 @@
 #include "Augbot/tagFull.h"
 
 
+/**
+ * @brief 
+ * 
+ *                                               Reads data from serial port connection with DWM1001, 
+ *                                          transforms data into ROS custom messages (final one is tagFull) 
+ *                                                      and publishes into 'localization'
+ * 
+ */
+
+
+
+
+
+/**
+ * @brief 
+ * 
+ * @param tagFullMsg final message to publish
+ * @param args args[0] ="le_us", args[1] = value of le_us
+ */
 void make_estimateMsg ( Augbot::tagFull* tagFullMsg, std::string args[] )
 {
     tagFullMsg->estimate.timestamp = std::time(nullptr);;
     tagFullMsg->estimate.le_us = std::stoi(args[1]);
 }
 
+
+
+/**
+ * @brief 
+ * 
+ * @param tagFullMsg final message to publish ( now finished )
+ * @param args args[0] = "est"
+ *             args[1] = x
+ *             args[2] = y
+ *             args[3] = z
+ *             args[4] = df
+ */
 void make_finalMsg ( Augbot::tagFull* tagFullMsg, std::string args[] )
 {
     tagFullMsg->estimate.position.x = std::stod(args[1]);
@@ -24,6 +55,19 @@ void make_finalMsg ( Augbot::tagFull* tagFullMsg, std::string args[] )
     tagFullMsg->estimate.valid = true;
 }
 
+
+
+/**
+ * @brief 
+ * 
+ * @param tagFullMsg final message to publish
+ * @param args all related to the anchor: args[0] = ID
+ *                                        args[1] = x
+ *                                        args[2] = y
+ *                                        args[3] = z
+ *                                        args[4] = range calculated between anchor and tag
+ * @param nAnchor
+ */
 void make_AnchorMsg ( Augbot::tagFull* tagFullMsg, std::string args[], int nAnchor )
 {
     Augbot::anchor anchorMsg;
@@ -37,6 +81,16 @@ void make_AnchorMsg ( Augbot::tagFull* tagFullMsg, std::string args[], int nAnch
     tagFullMsg->nAnchors = nAnchor;
 }
 
+
+
+/**
+ * @brief 
+ * 
+ * @param input data read from the serial port
+ * @param tagFullMsg 
+ * @param nAnchor
+ * @return int flag, 1 if estimation was successfull, 0 if not
+ */
 int parser( std::string input, Augbot::tagFull* tagFullMsg, int nAnchor )
 {
     std::string const delims{ ",[]= \n" };
@@ -68,6 +122,13 @@ int parser( std::string input, Augbot::tagFull* tagFullMsg, int nAnchor )
     return 0;
 }
 
+
+/**
+ * @brief 
+ * 
+ * @param input data read from the serial port connection with dwm1001
+ * @return Augbot::tagFull final message to be published
+ */
 Augbot::tagFull parser( std::string input )
 {
     Augbot::tagFull tagFullMsg;
@@ -89,7 +150,7 @@ int main(int argc, char **argv)
 
     printf("%d\n",argc);
 
-    ros::init(argc, argv, "talker");
+    ros::init(argc, argv, "dwm1001Reader");
 
     ros::NodeHandle n;
 

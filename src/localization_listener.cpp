@@ -3,7 +3,20 @@
 
 #include "Augbot/tagFull.h"
 
-//chamado quando recebe uma nova mensagem no topico chatter
+
+/**
+ * @brief 
+ *                                                     Reads data from 'localization' in the form of tagFull
+ */
+
+
+
+
+/**
+ * @brief callback for 'localization' chatter
+ * 
+ * @param msg tagFull message received
+ */
 void chatterCallback(const Augbot::tagFull::ConstPtr& msg)
 {
   ROS_INFO("I heard: [%f,%f,%f]", msg->estimate.position.x, msg->estimate.position.y, msg->estimate.position.z );
@@ -12,7 +25,7 @@ void chatterCallback(const Augbot::tagFull::ConstPtr& msg)
 int main(int argc, char **argv)
 {
   
-  ros::init(argc, argv, "listener");
+  ros::init(argc, argv, "localization_listener");
 
   
   ros::NodeHandle n;
