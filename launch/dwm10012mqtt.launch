@@ -1,0 +1,17 @@
+<launch>
+
+
+<group ns="subscriberDWM">
+    <!--  reads data from DWM1001 by serial port and publishes in 'localization' chatter -->
+   <node pkg="Augbot" name="reader" type="localization_improved_publisher"/>
+
+    <!--  subscribes 'localization' chatter and publishes tagFull in mqtt  -->
+    <node pkg="Augbot" name="subscriber_mqtt_full" type="ros2mqtt.py"/>
+
+    <!--  subscribes 'localization' chatter and publishes position in mqtt  -->
+    <node pkg="Augbot" name="subscriber_mqtt_pos" type="dwm10012mqtt.py"/>
+
+  </group>
+</launch>
+
+
