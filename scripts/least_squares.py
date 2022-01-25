@@ -42,26 +42,27 @@ def publish ( estimation ):
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "[%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z)
+    
     nAnchors = 0
+    xi.clear()
+    yi.clear()
+    zi.clear()
+    ri.clear()
+    
     for anchor in data.anchors:
-        print( "nAnchors:" + str(nAnchors) + "data.nAnchors:" + str(data.nAnchors) )
-        rospy.loginfo("%s[%f,%f,%f]=%f",anchor.ID,anchor.position.x,anchor.position.y,anchor.position.z,anchor.range)
         xi.append( anchor.position.x )
         yi.append( anchor.position.y )
         zi.append( anchor.position.z )
         ri.append( anchor.range )
+        rospy.loginfo(" range: \t%f", anchor.range)
         if data.nAnchors == nAnchors:
             if nAnchors == 2:
                 results = least_squares(equations, initial_guess)
-                print( results )
+                #print( results )
                 rospy.loginfo("LEAST_SQUARE [%f,%f,%f]", results.x[0], results.x[1], results.x[2] )
-                rospy.loginfo("DECAWAVE [%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z )
+                rospy.loginfo("DECAWAVE [%f,%f,%f]", data.estimate.position.x, data.estimate.position.y, data.estimate.position.z )
                 publish ( results.x )
                 return results.x
-            xi.clear()
-            yi.clear()
-            zi.clear()
-            ri.clear()
         nAnchors += 1
 
     
