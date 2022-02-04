@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     ros_callback_dwm1001_output = MagicMock()
 
-    subscriber_dwm1001_output = rospy.Subscriber("/dwm1001_output", position, ros_callback_dwm1001_output)
+    subscriber_dwm1001_output = rospy.Subscriber("/mqtt_dwm1001_output", position, ros_callback_dwm1001_output)
 
     listener()
 

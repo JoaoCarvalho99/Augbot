@@ -2,7 +2,7 @@ mqtt:
   client:
     protocol: 4      # MQTTv311
   connection:
-    host: localhost
+    host: localhost #192.168.1.253
     port: 1883
     keepalive: 60
   private_path: device/001
@@ -12,27 +12,36 @@ bridge:
   #tagFull
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: Augbot.msg:tagFull
-    topic_from: /tagFull
-    topic_to: tagFull
+    topic_from: /mqtt_tagFull
+    topic_to: mqtt_tagFull
   - factory: mqtt_bridge.bridge:MqttToRosBridge
     msg_type: Augbot.msg:tagFull
-    topic_from: tagFull
-    topic_to: /tagFull_output
+    topic_from: mqtt_tagFull
+    topic_to: /mqtt_tagFull_output
   #least_squares
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: Augbot.msg:position
-    topic_from: /least_squares
-    topic_to: least_squares
+    topic_from: /mqtt_least_squares
+    topic_to: mqtt_least_squares
   - factory: mqtt_bridge.bridge:MqttToRosBridge
     msg_type: Augbot.msg:position
-    topic_from: least_squares
-    topic_to: /least_squares_output
+    topic_from: mqtt_least_squares
+    topic_to: /mqtt_least_squares_output
   #decawave position
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: Augbot.msg:position
-    topic_from: /dwm1001
-    topic_to: dwm1001
+    topic_from: /mqtt_dwm1001
+    topic_to: mqtt_dwm1001
   - factory: mqtt_bridge.bridge:MqttToRosBridge
     msg_type: Augbot.msg:position
-    topic_from: dwm1001
-    topic_to: /dwm1001_output
+    topic_from: mqtt_dwm1001
+    topic_to: /mqtt_dwm1001_output
+  #anchorConfig
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: Augbot.msg:anchorConfig
+    topic_from: /mqtt_anchorConfig
+    topic_to: mqtt_anchorConfig
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: Augbot.msg:anchorConfig
+    topic_from: mqtt_anchorConfig
+    topic_to: /mqtt_anchorConfig_output

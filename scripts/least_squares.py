@@ -16,18 +16,17 @@ xi = []
 yi = []
 zi = []
 ri = []
+ranges = []
 initial_guess = []
 
-#equation for 3 exactly anchors (least_squares)
-def equations ( guess ):
+
+def equations2 ( guess ):
     x, y , z = guess
+    global ranges
 
-    return (
-        (x - xi[0])**2 + (y - yi[0])**2 + (z - zi[0])**2 - (ri[0] )**2,
-        (x - xi[1])**2 + (y - yi[1])**2 + (z - zi[1])**2 - (ri[1] )**2,
-        (x - xi[2])**2 + (y - yi[2])**2 + (z - zi[2])**2 - (ri[2] )**2,
-    )
-
+    return [
+        (x - a.position.x)**2 + (y - a.position.y)**2 + (z - a.position.z)**2 - (a.range )**2 for a in ranges
+    ]
 
 #publish estimation into publish/subscribe chatter "least_squares"
 def publish ( estimation ):
@@ -38,8 +37,21 @@ def publish ( estimation ):
     print(pub.name)
     pub.publish( pos )
 
+def callback2(data):
+    rospy.loginfo(rospy.get_caller_id() + "[%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z)
+    global ranges
+
+    ranges = [ data.anchors [ i ] for i in range ( data.nAnchors ) ] 
+
+    results = least_squares(equations2, initial_guess)
+    #print( results )
+    rospy.loginfo("LEAST_SQUARE [%f,%f,%f]", results.x[0], results.x[1], results.x[2] )
+    rospy.loginfo("DECAWAVE [%f,%f,%f]", data.estimate.position.x, data.estimate.position.y, data.estimate.position.z )
+    publish ( results.x )
+    return results.x
 
 
+#not used
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "[%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z)
     
@@ -48,7 +60,6 @@ def callback(data):
     yi.clear()
     zi.clear()
     ri.clear()
-    
     for anchor in data.anchors:
         xi.append( anchor.position.x )
         yi.append( anchor.position.y )
@@ -68,14 +79,14 @@ def callback(data):
     
 def listener():
 
-    rospy.Subscriber("localization", tagFull, callback)
+    rospy.Subscriber("localization", tagFull, callback2)
 
     rospy.spin()
   
 if __name__ == '__main__':
     initial_guess = [1.0, 1.0, 0.0]
 
-    pub = rospy.Publisher('least_squares', position, queue_size=10)
+    pub = rospy.Publisher('least_squares', position, queue_size=1)
     rospy.init_node('least_squares', anonymous=True)
    
     listener()

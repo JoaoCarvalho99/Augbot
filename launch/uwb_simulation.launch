@@ -1,0 +1,5 @@
+<launch>
+  <node name="uwb_simulation" pkg="Augbot" type="uwb_simulation.py" output="screen">
+    <rosparam command="load" file="$(find Augbot)/config/uwb_simulation_params.yaml" />
+  </node>
+</launch>

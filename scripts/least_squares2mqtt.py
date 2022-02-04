@@ -38,8 +38,8 @@ if __name__ == '__main__':
 
     ros_callback_least_squares = MagicMock()
 
-    subscriber_least_squares = rospy.Subscriber("/least_squares", position, ros_callback_least_squares)
+    subscriber_least_squares = rospy.Subscriber("/mqtt_least_squares", position, ros_callback_least_squares)
 
-    publisher = get_publisher("/least_squares", position, queue_size=1)
+    publisher = get_publisher("/mqtt_least_squares", position, queue_size=1)
 
     listener()

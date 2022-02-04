@@ -1,0 +1,23 @@
+<launch>
+
+
+<group ns="simulationDWM">
+
+    <!--  reads data from gazebo by chatter '/tf' and publishes in 'localization' chatter -->
+   <node pkg="Augbot" name="reader" type="uwb_simulation.py"/>
+
+    <!--  subscribes 'localization' chatter and publishes tagFull in mqtt  -->
+    <node pkg="Augbot" name="subscriber_mqtt_full" type="ros2mqtt.py"/>
+
+    <!--  subscribes 'localization' chatter and publishes position in mqtt  -->
+    <node pkg="Augbot" name="subscriber_mqtt_pos" type="dwm10012mqtt.py"/>
+
+    <!--   subscribes 'localization' chatter, transform data and publishes 'least_squares' chatter -->
+    <node pkg="Augbot" name="least_squares" type="least_squares.py"/>
+
+      <!--  subscribes 'least_squares' chatter and publishes position in mqtt  -->
+    <node pkg="Augbot" name="subscriber_mqtt_lq" type="least_squares2mqtt.py"/>
+
+  </group>
+</launch>
+

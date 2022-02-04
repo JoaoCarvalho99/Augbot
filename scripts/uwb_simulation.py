@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-from cmath import sqrt
+from distutils.log import error
+from time import time
 import rospy
-import scipy
-from scipy.optimize import least_squares
-from std_msgs.msg import String
-from Augbot.msg import tagFull, anchor
+from Augbot.msg import tagFull, anchor, anchorConfig
+import numpy as np
+from datetime import datetime
 
 from tf2_msgs.msg import TFMessage
 
@@ -15,18 +15,22 @@ from tf2_msgs.msg import TFMessage
 
 
 
-initial_guess = []
-ri = []
+#initial_guess = []
+#ri = []
 pos = [ 0.0, 0.0, 0.0 ]
 
-nAnchors = 3 #5
+nAnchors = 5
 anchors = [
     [ -5.0, -5.0, 2.0 ],
     [ 5.0, 5.0, 2.0 ],
-    [ 5.0, -5.0, 2.0 ]#,
-   # [ -5.0, 5.0, 2.0 ],
-   # [ 0.0, 0.0, 2.0 ]
+    [ 5.0, -5.0, 2.0 ],
+    [ -5.0, 5.0, 2.0 ],
+    [ 0.0, 0.0, 2.0 ]
 ]
+
+prev = 0
+
+mu, sigma = 0, 0.1 # mean and standard deviation
 
 #equation for 5 exactly anchors (least_squares)
 #def equations ( guess ):
@@ -40,12 +44,57 @@ anchors = [
 #        (pos[0] - anchors[4][0])**2 + (pos[1] - anchors[4][1])**2 + (pos[2] - anchors[4][2])**2 - (r5 )**2,
 #    )
 
+
+def load_yaml():
+    global nAnchors, anchors, mu, sigma
+
+
+    params = rospy.get_param("~", {})
+
+    print ( params )
+
+    if len( params ) == 0:
+        return
+
+    n = params.get( "uwb_simulation" ).get("noise")
+
+    mu, sigma = n.get( "mu" ), n.get( "sigma" )
+
+    nAnchors = params.get( "uwb_simulation" ).get("nAnchors")
+
+    anchors = params.get( "uwb_simulation" ).get("anchors")
+
+
+def noise ( ):
+    global mu, sigma
+    n = np.random.default_rng().normal(mu, sigma, 1)
+    return n[0]
+
 def distance ( anchor, pos ):
-    return ( ( pos[0] - anchor[0] )**2 + ( pos[1] - anchor[1] )**2 + ( pos[2] - anchor[2] )**2 )**( 1/2 )
+    return ( ( pos[0] - anchor[0] )**2 + ( pos[1] - anchor[1] )**2 + ( pos[2] - anchor[2] )**2 )**( 1/2 ) + noise ()
+
+
+def ConfigCallback ( data ):
+    global anchors, nAnchors
+
+    nAnchors = data.nAnchors
+
+    rospy.loginfo ( "anchors changed" )
+
+    for i in range ( data.nAnchors ):
+        anchors[i][0] = data.anchors[i].position.x
+        anchors[i][1] = data.anchors[i].position.y
+        anchors[i][2] = data.anchors[i].position.z
+
 
 
 
 def callback(data):
+    global prev
+    now = datetime.utcnow().timestamp()
+    if  now - prev < 0.001 :
+        return
+    prev = now 
     tagFullMsg = tagFull()
     rospy.loginfo( rospy.get_caller_id() + "[%f,%f,%f]", 
     data.transforms[0].transform.translation.x, data.transforms[0].transform.translation.y, data.transforms[0].transform.translation.z )
@@ -74,7 +123,7 @@ def callback(data):
         #anchorMsg.range = results.x[i]
         tagFullMsg.anchors[i] = anchorMsg
         i += 1
-    tagFullMsg.nAnchors = nAnchors - 1
+    tagFullMsg.nAnchors = nAnchors
     pub.publish ( tagFullMsg )
 
 
@@ -83,13 +132,17 @@ def listener():
 
     rospy.Subscriber("tf", TFMessage , callback)
 
+    rospy.Subscriber('anchorConfig', anchorConfig , ConfigCallback)
+
     rospy.spin()
   
 if __name__ == '__main__':
     rospy.init_node('simulation', anonymous=True)
 
-    pub = rospy.Publisher('localization', tagFull, queue_size=10)
+    pub = rospy.Publisher('localization', tagFull, queue_size=1)
 
     #initial_guess = [ 1.0, 1.0, 1.0, 1.0, 1.0 ]
+
+    load_yaml()
    
     listener()

@@ -1,0 +1,5 @@
+<launch>
+  <node name="mqttConfigAnchor" pkg="Augbot" type="mqttConfigAnchor.py" output="screen">
+    <rosparam command="load" file="$(find Augbot)/config/configAnchorMsg_params.yaml" />
+  </node>
+</launch>

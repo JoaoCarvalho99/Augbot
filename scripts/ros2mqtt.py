@@ -78,9 +78,9 @@ if __name__ == '__main__':
 
     ros_callback_tagFull = MagicMock()
 
-    subscriber_tagFull = rospy.Subscriber("/tagFull", tagFull, ros_callback_tagFull)
+    subscriber_tagFull = rospy.Subscriber("/mqtt_tagFull", tagFull, ros_callback_tagFull)
 
-    publisher = get_publisher("/tagFull", tagFull, queue_size=1)
+    publisher = get_publisher("/mqtt_tagFull", tagFull, queue_size=1)
     print(publisher.name)
 
     listener()
