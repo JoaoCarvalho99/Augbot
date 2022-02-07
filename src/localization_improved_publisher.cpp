@@ -78,7 +78,7 @@ void make_AnchorMsg ( Augbot::tagFull* tagFullMsg, std::string args[], int nAnch
     anchorMsg.position.z = std::stod(args[3]);  
     anchorMsg.range = std::stod(args[4]);       
     tagFullMsg->anchors[nAnchor] = anchorMsg;
-    tagFullMsg->nAnchors = nAnchor;
+    tagFullMsg->nAnchors = nAnchor + 1;
 }
 
 
@@ -126,22 +126,32 @@ int parser( std::string input, Augbot::tagFull* tagFullMsg, int nAnchor )
 /**
  * @brief 
  * 
- * @param input data read from the serial port connection with dwm1001
- * @return Augbot::tagFull final message to be published
+ * @param input data read from the serial port connection with dwm1001 and publishes tagFull to chatter 'localization"
  */
-Augbot::tagFull parser( std::string input )
+void parser( std::string input, ros::Publisher chatter_pub )
 {
     Augbot::tagFull tagFullMsg;
     std::string const delims{ " \n" };
     size_t beg, pos = 0;
     int i = 0;
     int flag = 0;
+    ROS_INFO ( "%s", input.c_str() );
     while ((beg = input.find_first_not_of(delims, pos)) != std::string::npos)
     {
-      pos = input.find_first_of(delims, beg + 1);
-      flag = parser ( input.substr(beg, pos - beg), &tagFullMsg, i++ );
+        pos = input.find_first_of(delims, beg + 1);
+        flag = parser ( input.substr(beg, pos - beg), &tagFullMsg, i++ );
+        if ( flag == 1)
+        {
+            if ( tagFullMsg.estimate.valid )
+            {
+                chatter_pub.publish ( tagFullMsg );
+
+            }
+
+            tagFullMsg = Augbot::tagFull();
+            i = 0;
+        }
     }
-    return tagFullMsg;
 }
 
 
@@ -201,10 +211,7 @@ int main(int argc, char **argv)
 
             ROS_INFO("%s", input.c_str());
 
-            Augbot::tagFull tagFullMsg = parser ( input );
-
-            if ( tagFullMsg.estimate.valid )
-                chatter_pub.publish ( tagFullMsg );
+            parser ( input, chatter_pub );
 
             input = "";
 
