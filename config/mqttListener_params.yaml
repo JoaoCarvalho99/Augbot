@@ -1,0 +1,5 @@
+mqttListener:
+  anchorConfig:
+    msgType: anchorConfig
+    listenTo: "mqtt_anchorConfig_output"
+    pubTo: "anchorConfig"

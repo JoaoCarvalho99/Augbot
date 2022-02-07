@@ -92,7 +92,7 @@ def ConfigCallback ( data ):
 def callback(data):
     global prev
     now = datetime.utcnow().timestamp()
-    if  now - prev < 0.001 :
+    if  now - prev < 0.01:
         return
     prev = now 
     tagFullMsg = tagFull()

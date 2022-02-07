@@ -20,7 +20,7 @@ ranges = []
 initial_guess = []
 
 
-def equations2 ( guess ):
+def equations ( guess ):
     x, y , z = guess
     global ranges
 
@@ -37,49 +37,23 @@ def publish ( estimation ):
     print(pub.name)
     pub.publish( pos )
 
-def callback2(data):
+def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "[%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z)
     global ranges
 
     ranges = [ data.anchors [ i ] for i in range ( data.nAnchors ) ] 
 
-    results = least_squares(equations2, initial_guess)
+    results = least_squares(equations, initial_guess)
     #print( results )
     rospy.loginfo("LEAST_SQUARE [%f,%f,%f]", results.x[0], results.x[1], results.x[2] )
     rospy.loginfo("DECAWAVE [%f,%f,%f]", data.estimate.position.x, data.estimate.position.y, data.estimate.position.z )
     publish ( results.x )
     return results.x
 
-
-#not used
-def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + "[%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z)
-    
-    nAnchors = 0
-    xi.clear()
-    yi.clear()
-    zi.clear()
-    ri.clear()
-    for anchor in data.anchors:
-        xi.append( anchor.position.x )
-        yi.append( anchor.position.y )
-        zi.append( anchor.position.z )
-        ri.append( anchor.range )
-        rospy.loginfo(" range: \t%f", anchor.range)
-        if data.nAnchors == nAnchors:
-            if nAnchors == 2:
-                results = least_squares(equations, initial_guess)
-                #print( results )
-                rospy.loginfo("LEAST_SQUARE [%f,%f,%f]", results.x[0], results.x[1], results.x[2] )
-                rospy.loginfo("DECAWAVE [%f,%f,%f]", data.estimate.position.x, data.estimate.position.y, data.estimate.position.z )
-                publish ( results.x )
-                return results.x
-        nAnchors += 1
-
     
 def listener():
 
-    rospy.Subscriber("localization", tagFull, callback2)
+    rospy.Subscriber("localization", tagFull, callback)
 
     rospy.spin()
   
