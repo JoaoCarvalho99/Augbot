@@ -57,6 +57,7 @@ add_message_files(
   estimate.msg
   tagFull.msg
   position.msg
+  anchorConfig.msg
   #Message1.msg
   #Message2.msg
   )
