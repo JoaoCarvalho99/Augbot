@@ -11,7 +11,6 @@ from mqtt_bridge.app import mqtt_bridge_node
 #       ALSO
 # mosquitto -v
 
-
 try:
     mqtt_bridge_node()
 except rospy.ROSInterruptException:

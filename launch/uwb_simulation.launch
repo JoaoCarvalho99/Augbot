@@ -1,12 +1,33 @@
 <launch>
 
+    <!--  reads data from gazebo by chatter '/tf' and publishes in 'localization' chatter -->
     <node name="uwb_simulation" pkg="Augbot" type="uwb_simulation.py" output="screen">
       <rosparam command="load" file="$(find Augbot)/config/uwb_simulation_params.yaml" />
     </node>
-    
-    <node name="mqttListener" pkg="Augbot" type="mqttListener.py" output="screen">
+
+    <!--  subscribes 'localization' chatter and publishes tagFull in mqtt  -->
+    <node name="mqttBridgeTagFull" pkg="Augbot" type="mqttBridge.py" output="screen">
+      <param name="subset" value="tagFull" /> 
+      <param name="toDo" value="mqttPublish" /> 
+      <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
+    </node>
+
+    <!--   subscribes 'localization' chatter, transform data and publishes 'least_squares' chatter -->
+    <node pkg="Augbot" name="least_squares" type="least_squares.py"/>
+
+      <!--  subscribes 'least_squares' chatter and publishes position in mqtt  -->
+    <node name="mqttBridgeLS" pkg="Augbot" type="mqttBridge.py" output="screen">
+      <param name="subset" value="leastSquares" /> 
+      <param name="toDo" value="mqttPublish" /> 
+      <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
+    </node>
+
+      <!--  subscribes 'mqtt_anchorConfig_output' mqtt and publishes to chatter "anchorConfig"  -->
+    <node name="mqttBridgeConfig" pkg="Augbot" type="mqttBridge.py" output="screen">
       <param name="subset" value="anchorConfig" /> 
-      <rosparam command="load" file="$(find Augbot)/config/mqttListener_params.yaml" />
+      <param name="toDo" value="mqttListen" /> 
+      <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
     </node>
 
 </launch>
+

@@ -1,0 +1,22 @@
+mqttListen:
+  anchorConfig:
+    msgType: anchorConfig
+    listenTo: "mqtt_anchorConfig_output"
+    pubTo: "anchorConfig"
+  leastSquares:
+    msgType: position
+    listenTo: "/mqtt_least_squares"
+    pubTo: "least_squares"
+  tagFull:
+    msgType: tagFull
+    listenTo: "/mqtt_tagFull"
+    pubTo: "localization"
+mqttPublish:
+  leastSquares:
+    msgType: position
+    listenTo: "least_squares"
+    pubTo: "/mqtt_least_squares"
+  tagFull:
+    msgType: tagFull
+    listenTo: "localization"
+    pubTo: "/mqtt_tagFull"
