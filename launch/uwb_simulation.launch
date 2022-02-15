@@ -1,5 +1,8 @@
 <launch>
 
+    <node name="simulation_movement" pkg="Augbot" type="simulation_movement.py" output="screen">
+    </node>
+
     <!--  reads data from gazebo by chatter '/tf' and publishes in 'localization' chatter -->
     <node name="uwb_simulation" pkg="Augbot" type="uwb_simulation.py" output="screen">
       <rosparam command="load" file="$(find Augbot)/config/uwb_simulation_params.yaml" />
