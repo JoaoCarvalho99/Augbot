@@ -4,6 +4,7 @@ import rosbag
 import rospy
 from optparse import OptionParser
 from datetime import datetime
+import os
 
 def message_to_csv( stream, msg ):
     try:
@@ -47,7 +48,14 @@ def bag_to_csv(options, fname):
             if topic in streamdict:
                 stream = streamdict[topic]
             else:
-                stream = open( fname[:-4] + "_" + topic + ".csv" ,'w')
+                print (file)
+                parent = file[ :file.rfind("/") ] + "/"
+                child = file[ file.rfind( "/" ):-4 ].replace('/','')
+                path = os.path.join( parent, child )
+                if not os.path.isdir(path):
+                    os.mkdir(path)
+                    print ( "path created:"+ path)
+                stream = open( path + "/" + topic + ".csv" ,'w')
                 print ( "new file: " + stream.name )
                 streamdict[topic] = stream
                 stream.write("time")
@@ -118,5 +126,5 @@ if __name__ == '__main__':
 
 
     main( options)
-
+    
     

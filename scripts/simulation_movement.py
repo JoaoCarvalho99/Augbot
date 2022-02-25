@@ -20,39 +20,39 @@ def callback(data):
     prev = now 
     rospy.loginfo( rospy.get_caller_id() + "[%f,%f,%f]", 
     data.transforms[0].transform.translation.x, data.transforms[0].transform.translation.y, data.transforms[0].transform.translation.z )
-    pos = position()
-    pos = data.transforms[0].transform.translation
-    bag.write( "position", pos )
+    #pos = position()
+    #pos = data.transforms[0].transform.translation
+    #bag.write( "position", pos )
     
 def move():
     global twist
-    info = String()
+    #info = String()
     twist.linear.x = 0
     pub.publish( twist )
     rospy.loginfo("STOP")
-    info.data = "STOP"
-    bag.write( 'info', info )
+    #info.data = "STOP"
+    #bag.write( 'info', info )
     rospy.sleep ( 5 )
 
     twist.linear.x = 1
     pub.publish ( twist )
     rospy.loginfo("moving forward")
-    info.data = "forward"
-    bag.write( 'info', info )
+    #info.data = "forward"
+    #bag.write( 'info', info )
     rospy.sleep ( 10 )
 
     twist.linear.x = 0
     pub.publish( twist )
     rospy.loginfo("STOP")
-    info.data = "STOP"
-    bag.write( 'info', info )
+    #info.data = "STOP"
+    #bag.write( 'info', info )
     rospy.sleep ( 5 )
 
     twist.linear.x = -1
     pub.publish ( twist )
     rospy.loginfo("moving backwards")
-    info.data = "backward"
-    bag.write( 'info', info )
+    #info.data = "backward"
+    #bag.write( 'info', info )
     rospy.sleep ( 10 )
 
 
@@ -64,9 +64,10 @@ if __name__ == '__main__':
 
     twist = Twist()
 
-    name = "rosbag/simulation/positions/" + str( datetime.now() ) + ".bag"
-    name.replace(" ", "_")
-    bag = rosbag.Bag( name, 'w' )
+    #name = "rosbag/simulation/positions/" + str( datetime.now() ) + ".bag"
+    #name = name.replace(' ', '_')
+    #name = name.replace(':', '-')
+    #bag = rosbag.Bag( name, 'w' )
 
     rospy.Subscriber("tf", TFMessage , callback)
 
@@ -77,7 +78,17 @@ if __name__ == '__main__':
     twist.angular.z = 0
 
     i = 0
-    while i<10:
+    while i<1000:
         move()
         i += 1
-    bag.close()
+
+    info = String()
+    twist.linear.x = 0
+    pub.publish( twist )
+    rospy.loginfo("STOP")
+    #info.data = "STOP"
+    #bag.write( 'info', info )
+
+    #print ( "wrote to: " + name)
+
+    #bag.close()

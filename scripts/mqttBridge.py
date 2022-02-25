@@ -87,7 +87,7 @@ def listen():
             msg = msg1
 
 def callback(data):
-    publisher.publish( )
+    publisher.publish( data )
     _wait_callback ( ros_callback )
 
 def listener():

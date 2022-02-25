@@ -1,7 +1,6 @@
 <launch>
 
-    <node name="simulation_movement" pkg="Augbot" type="simulation_movement.py" output="screen">
-    </node>
+    <node name="simulation_movement" pkg="Augbot" type="simulation_movement.py"></node>
 
     <!--  reads data from gazebo by chatter '/tf' and publishes in 'localization' chatter -->
     <node name="uwb_simulation" pkg="Augbot" type="uwb_simulation.py" output="screen">

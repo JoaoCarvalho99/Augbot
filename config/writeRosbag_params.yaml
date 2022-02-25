@@ -1,0 +1,7 @@
+topics2rosbag:
+  topics:
+    [
+      ["anchorConfig", anchorConfig, data],
+      ["least_squares", position, data],
+      ["localization", tagFull, data.estimate.position]
+    ]
