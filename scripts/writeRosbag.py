@@ -29,8 +29,8 @@ def load_yaml ():
 
 
 def callback( data, topic ):
-    bag.write ( topic[0], eval ( topic[2] ) )
-
+    for aux in topic[2]:
+        exec ( aux[1] )
 
 if __name__ == '__main__':
 
@@ -39,7 +39,6 @@ if __name__ == '__main__':
     load_yaml()
 
     name = "/home/augmanity1/catkin_ws/rosbag/simulation/positions/" + str( datetime.now() ) + ".bag"
-    print ( name )
     name = name.replace(' ', '_')
     name = name.replace(':', '-')
     print ( name )

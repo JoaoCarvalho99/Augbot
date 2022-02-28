@@ -1,7 +1,8 @@
 topics2rosbag:
   topics:
     [
-      ["anchorConfig", anchorConfig, data],
-      ["least_squares", position, data],
-      ["localization", tagFull, data.estimate.position]
+      ["anchorConfig", anchorConfig, [ [ data, "bag.write ( topic[0], eval ( aux[0] ) )" ] ] ],
+      ["least_squares", position, [ [ data, "bag.write ( topic[0], eval ( aux[0] ) )" ] ] ],
+      ["localization", tagFull, [ [ data.estimate.position, "bag.write ( topic[0], eval ( aux[0] ) )" ], 
+                                  [ data.anchors, "for a in range ( data.nAnchors ): bag.write ( 'ranges', eval ( aux[0] )[a] )" ] ] ]
     ]
