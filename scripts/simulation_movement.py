@@ -34,7 +34,7 @@ def move():
     #bag.write( 'info', info )
     rospy.sleep ( 5 )
 
-    twist.linear.x = 1
+    twist.linear.x = 0.2
     pub.publish ( twist )
     rospy.loginfo("moving forward")
     #info.data = "forward"
@@ -48,7 +48,7 @@ def move():
     #bag.write( 'info', info )
     rospy.sleep ( 5 )
 
-    twist.linear.x = -1
+    twist.linear.x = -0.2
     pub.publish ( twist )
     rospy.loginfo("moving backwards")
     #info.data = "backward"

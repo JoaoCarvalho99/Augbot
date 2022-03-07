@@ -63,6 +63,8 @@
   <build_export_depend>serial</build_export_depend>
   <!-- <exec_depend>Dynamic_reconfigure</exec_depend>-->
   <build_depend>message_generation</build_depend>
+  <build_depend>eigen</build_depend>
+  <exec_depend>eigen</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>

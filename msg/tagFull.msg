@@ -1,4 +1,4 @@
-float64 timestamp
-anchor[10] anchors
+float64 timestamp = 0
+anchor[] anchors
 estimate estimate
-uint8 nAnchors
+uint8 nAnchors = 0

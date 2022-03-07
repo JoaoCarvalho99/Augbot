@@ -5,7 +5,7 @@ from mqttBridge import get_publisher, _wait_callback
 from mock import MagicMock
 import paho.mqtt.client as mqtt
 
-from Augbot.msg import anchorConfig
+from Augbot.msg import anchorConfig, anchor
 
 
 def sendMsg ():
@@ -22,13 +22,16 @@ def sendMsg ():
 
     print( msg )
 
+    a = anchor()
+
     anchorConfigMsg.nAnchors = msg.get ("nAnchors")
     anchors = msg.get ( "anchors" )
 
     for i in range ( anchorConfigMsg.nAnchors ):
-        anchorConfigMsg.anchors[i].position.x = anchors[i][0]
-        anchorConfigMsg.anchors[i].position.y = anchors[i][0]
-        anchorConfigMsg.anchors[i].position.z = anchors[i][0]
+        a.position.x = anchors[i][0]
+        a.position.y = anchors[i][0]
+        a.position.z = anchors[i][0]
+        anchorConfigMsg.anchors.append ( a )
 
     print( anchorConfigMsg )
 

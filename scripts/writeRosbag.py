@@ -29,8 +29,8 @@ def load_yaml ():
 
 
 def callback( data, topic ):
-    for aux in topic[2]:
-        exec ( aux[1] )
+    bag.write ( topic[0], data )
+
 
 if __name__ == '__main__':
 

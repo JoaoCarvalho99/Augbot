@@ -12,10 +12,14 @@ def message_to_csv( stream, msg ):
             val = msg.__getattribute__(s)
             message_to_csv( stream, val )
     except:
-        msg_str = str(msg)
-        if msg_str.find(",") != -1:
-            msg_str = "\"" + msg_str + "\""
-        stream.write("," + msg_str)
+        if type (msg ) == list:
+            for a in msg:
+                message_to_csv ( stream, a)
+        else:
+            msg_str = str(msg)
+            if msg_str.find(",") != -1:
+                msg_str = "\"" + msg_str + "\""
+            stream.write("," + msg_str)
 
 def message_type_to_csv(stream, msg, parent_content_name=""):
     try:
@@ -23,7 +27,11 @@ def message_type_to_csv(stream, msg, parent_content_name=""):
             val = msg.__getattribute__(s)
             message_type_to_csv(stream, val, ".".join([parent_content_name,s]))
     except:
-        stream.write("," + parent_content_name)
+        if type ( msg ) == list:
+            for a in msg:
+                message_type_to_csv(stream, a, parent_content_name)
+        else:
+            stream.write("," + parent_content_name)
  
 def bag_to_csv(options, fname):
     try:

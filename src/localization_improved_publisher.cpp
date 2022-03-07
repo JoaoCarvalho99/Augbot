@@ -77,7 +77,8 @@ void make_AnchorMsg ( Augbot::tagFull* tagFullMsg, std::string args[], int nAnch
     anchorMsg.position.y = std::stod(args[2]);  
     anchorMsg.position.z = std::stod(args[3]);  
     anchorMsg.range = std::stod(args[4]);       
-    tagFullMsg->anchors[nAnchor] = anchorMsg;
+    tagFullMsg->anchors.push_back ( anchorMsg );
+    //tagFullMsg->anchors[nAnchor] = anchorMsg;
     tagFullMsg->nAnchors = nAnchor + 1;
 }
 

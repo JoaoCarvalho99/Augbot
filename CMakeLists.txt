@@ -17,6 +17,8 @@ find_package(catkin REQUIRED COMPONENTS
   roslaunch
 )
 
+find_package(Eigen3 REQUIRED)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -58,6 +60,7 @@ add_message_files(
   tagFull.msg
   position.msg
   anchorConfig.msg
+  deadReckoning.msg
   #Message1.msg
   #Message2.msg
   )
@@ -125,6 +128,8 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
+
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
@@ -233,3 +238,6 @@ target_link_libraries(localization_improved_publisher ${catkin_LIBRARIES})
 
 add_executable(localization_listener src/localization_listener.cpp)
 target_link_libraries(localization_listener ${catkin_LIBRARIES})
+
+add_executable(deadReckoning src/deadReckoning.cpp)
+target_link_libraries(deadReckoning ${catkin_LIBRARIES})

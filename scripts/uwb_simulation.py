@@ -121,7 +121,7 @@ def callback(data):
         anchorMsg.range = distance( anchors[i], pos )
         rospy.loginfo( "\t%f", anchorMsg.range )
         #anchorMsg.range = results.x[i]
-        tagFullMsg.anchors[i] = anchorMsg
+        tagFullMsg.anchors.append ( anchorMsg )
         i += 1
     tagFullMsg.nAnchors = nAnchors
     pub.publish ( tagFullMsg )
