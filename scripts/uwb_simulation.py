@@ -32,18 +32,6 @@ prev = 0
 
 mu, sigma = 0, 0.1 # mean and standard deviation
 
-#equation for 5 exactly anchors (least_squares)
-#def equations ( guess ):
-#    r1, r2, r3, r4, r5 = guess
-#
-#    return (
-#        (pos[0] - anchors[0][0])**2 + (pos[1] - anchors[0][1])**2 + (pos[2] - anchors[0][2])**2 - (r1 )**2,
-#        (pos[0] - anchors[1][0])**2 + (pos[1] - anchors[1][1])**2 + (pos[2] - anchors[1][2])**2 - (r2 )**2,
-#        (pos[0] - anchors[2][0])**2 + (pos[1] - anchors[2][1])**2 + (pos[2] - anchors[2][2])**2 - (r3 )**2,
-#        (pos[0] - anchors[3][0])**2 + (pos[1] - anchors[3][1])**2 + (pos[2] - anchors[3][2])**2 - (r4 )**2,
-#        (pos[0] - anchors[4][0])**2 + (pos[1] - anchors[4][1])**2 + (pos[2] - anchors[4][2])**2 - (r5 )**2,
-#    )
-
 
 def load_yaml():
     global nAnchors, anchors, mu, sigma
@@ -68,6 +56,7 @@ def load_yaml():
 def noise ( ):
     global mu, sigma
     n = np.random.default_rng().normal(mu, sigma, 1)
+    rospy.loginfo ( "error: " + str(n[0]) )
     return n[0]
 
 def distance ( anchor, pos ):
@@ -102,6 +91,11 @@ def callback(data):
     tagFullMsg.estimate.position.x = data.transforms[0].transform.translation.x
     tagFullMsg.estimate.position.y = data.transforms[0].transform.translation.y
     tagFullMsg.estimate.position.z = data.transforms[0].transform.translation.z
+    tagFullMsg.estimate.accuracy = 100
+    tagFullMsg.estimate.le_us = 100
+    tagFullMsg.estimate.timestamp = now
+    tagFullMsg.estimate.valid = True
+
 
     pos[0] = tagFullMsg.estimate.position.x 
     pos[1] = tagFullMsg.estimate.position.y 
@@ -119,6 +113,7 @@ def callback(data):
         anchorMsg.position.y = anchors[i][1]
         anchorMsg.position.z = anchors[i][2]
         anchorMsg.range = distance( anchors[i], pos )
+        anchorMsg.timestamp = now
         rospy.loginfo( "\t%f", anchorMsg.range )
         #anchorMsg.range = results.x[i]
         tagFullMsg.anchors.append ( anchorMsg )

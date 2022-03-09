@@ -6,8 +6,8 @@
 #include <nav_msgs/Odometry.h>
 #include <Eigen/Dense>
 #include <cmath>
+#include <ctime>
 
-#include "Augbot/deadReckoning.h"
 #include "Augbot/position.h"
 
 struct Pose
@@ -30,10 +30,14 @@ private:
     Eigen::Vector3d velocity;
     visualization_msgs::Marker path;
 
-    Augbot::deadReckoning pubMsg = Augbot::deadReckoning();
+    std::time_t prev = std::time(nullptr);
+
+    Augbot::position pubMsg = Augbot::position();
+    Augbot::position pubMsg1 = Augbot::position();
 
     ros::NodeHandle n;
-    ros::Publisher line_pub = n.advertise<Augbot::deadReckoning>("deadReckoning", 1000);
+    ros::Publisher line_pub = n.advertise<Augbot::position>("deadReckoning", 1000);
+    ros::Publisher line_pub1 = n.advertise<Augbot::position>("deadReckoning1", 1000);
 
     double deltaT;
     bool firstT;
@@ -65,6 +69,8 @@ ImuIntegrator::ImuIntegrator() {
   pose.orien = Eigen::Matrix3d::Identity();
   velocity = zero;
   firstT = true;
+
+  const auto prev = std::chrono::system_clock::now();
 
   // Line strip is blue
   path.color.b = 1.0;
@@ -102,7 +108,6 @@ Eigen::Matrix3d setOrientation (const geometry_msgs::Quaternion& msg){
 void ImuIntegrator::ImuCallback(const nav_msgs::Odometry::ConstPtr& msg) {
     std::cout << msg->twist.twist << std::endl;
     std::cout << msg->pose.pose << std::endl;
-    Augbot::position posError = Augbot::position();
     if (firstT) {
       time = msg->header.stamp;
       deltaT = 0;
@@ -122,21 +127,25 @@ void ImuIntegrator::ImuCallback(const nav_msgs::Odometry::ConstPtr& msg) {
       ROS_INFO ( "ERROR [%f,%f,%f]", msg->pose.pose.position.x - pose.pos[0] ,msg->pose.pose.position.y - pose.pos[1] ,
       msg->pose.pose.position.z - pose.pos[2] );
 
-      posError.x = msg->pose.pose.position.x - pose.pos[0];
-      posError.y = msg->pose.pose.position.y - pose.pos[1];
-      posError.z = msg->pose.pose.position.z - pose.pos[2];
-      pubMsg.prev_error = posError;
-
       ROS_INFO("[%f,%f,%f]", pose.teste[0],pose.teste[1],pose.teste[2]);
       ROS_INFO ( "ERROR [%f,%f,%f]", msg->pose.pose.position.x - pose.teste[0] ,msg->pose.pose.position.y - pose.teste[1] ,
       msg->pose.pose.position.z - pose.teste[2] );
 
-      posError.x = msg->pose.pose.position.x - pose.teste[0];
-      posError.y = msg->pose.pose.position.y - pose.teste[1];
-      posError.z = msg->pose.pose.position.z - pose.teste[2];
-      pubMsg.justVel_error =  posError;
+      std::time_t now = std::time(nullptr);
 
-      publishMessage();
+      if ( now - prev > 1 ) {
+        prev = now;
+
+        pubMsg.x = msg->pose.pose.position.x - pose.pos[0];
+        pubMsg.y = msg->pose.pose.position.y - pose.pos[1];
+        pubMsg.z = msg->pose.pose.position.z - pose.pos[2];
+
+        pubMsg1.x = msg->pose.pose.position.x - pose.teste[0];
+        pubMsg1.y = msg->pose.pose.position.y - pose.teste[1];
+        pubMsg1.z = msg->pose.pose.position.z - pose.teste[2];
+
+        publishMessage();
+      }
     }
 }
 
@@ -155,7 +164,11 @@ void ImuIntegrator::updatePath(const Eigen::Vector3d &msg) {
   path.points.push_back(p);
 }
 
-void ImuIntegrator::publishMessage() { line_pub.publish(pubMsg); }
+void ImuIntegrator::publishMessage ()
+{
+  line_pub.publish(pubMsg); 
+  line_pub1.publish( pubMsg1 );
+}
 
 void ImuIntegrator::calcOrientation(const geometry_msgs::Vector3 &msg) {
   Eigen::Matrix3d B;
@@ -175,16 +188,8 @@ void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &msg) {
   velocity = velocity + deltaT * (acc_g - gravity);
   pose.pos = pose.pos + deltaT * velocity;
 
-  pubMsg.prev.x = pose.pos[0];
-  pubMsg.prev.y = pose.pos[1];
-  pubMsg.prev.z = pose.pos[2];
-
   velocity = Eigen::Vector3d(msg.x,msg.y,msg.z);
   pose.teste = pose.teste + deltaT * velocity;
-
-  pubMsg.justVel.x = pose.teste[0];
-  pubMsg.justVel.y = pose.teste[1];
-  pubMsg.justVel.z = pose.teste[2];
 
 }
 
@@ -192,6 +197,7 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "Imu_Integrator_node");
   ros::NodeHandle nh;
   ImuIntegrator *imu_integrator = new ImuIntegrator();//line);
+
 
   ros::Subscriber Imu_message = nh.subscribe("/odom", 1000, &ImuIntegrator::ImuCallback, imu_integrator);
   ros::spin();

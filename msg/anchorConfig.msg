@@ -1,2 +1,2 @@
-int8 nAnchors = 0
+int8 nAnchors
 anchor[] anchors

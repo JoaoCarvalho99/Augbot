@@ -1,4 +1,4 @@
-float64 timestamp = 0
-string ID = "0"
+float64 timestamp
+string ID
 position position
-float64 range = 0
+float64 range

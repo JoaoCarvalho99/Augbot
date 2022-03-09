@@ -6,6 +6,18 @@ from optparse import OptionParser
 from datetime import datetime
 import os
 
+listStreams = []
+
+def list_to_csv ( stream ):
+    name = stream[:-4] + "_anchors.csv"
+    for s in listStreams:
+        if s.name == name:
+            return s
+    s = open ( name, "w" )
+    listStreams.append ( s )
+    print ( "new file: " + s.name )
+    return s
+
 def message_to_csv( stream, msg ):
     try:
         for s in type(msg).__slots__:
@@ -13,8 +25,11 @@ def message_to_csv( stream, msg ):
             message_to_csv( stream, val )
     except:
         if type (msg ) == list:
+            stream1 = list_to_csv ( stream.name )
             for a in msg:
-                message_to_csv ( stream, a)
+                message_to_csv ( stream1, a)
+                stream1.write('\n')
+
         else:
             msg_str = str(msg)
             if msg_str.find(",") != -1:
@@ -28,8 +43,10 @@ def message_type_to_csv(stream, msg, parent_content_name=""):
             message_type_to_csv(stream, val, ".".join([parent_content_name,s]))
     except:
         if type ( msg ) == list:
-            for a in msg:
-                message_type_to_csv(stream, a, parent_content_name)
+            stream1 = list_to_csv ( stream.name )
+            a = msg[0]
+            message_type_to_csv( stream1, a, parent_content_name)
+            stream1.write('\n')
         else:
             stream.write("," + parent_content_name)
  

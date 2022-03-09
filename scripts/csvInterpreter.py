@@ -4,11 +4,15 @@ import csv
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
 
 if __name__ == '__main__':
     file = sys.argv[1]
-    path = file[ :file.rfind("/") ] + "/" 
+    path = file[ :file.rfind(".") ] + "/" 
+
+    if not os.path.isdir(path):
+        os.mkdir(path)
 
     df = pd.read_csv( file, sep=',')
     print ( df )
@@ -27,18 +31,26 @@ if __name__ == '__main__':
 
     col_time = df.iloc[:,0]
 
-    col_x = df.iloc[:,1]
+    col_x = df.iloc[:,-3]
+    plt.figure(0)
     plt.plot( range( col_x.count() ), col_x )
 
-    col_y = df.iloc[:,2]
+    col_y = df.iloc[:,-2]
     plt.plot( range( col_y.count() ), col_y )
 
-    col_z = df.iloc[:,3]
+    col_z = df.iloc[:,-1]
     plt.plot( range( col_z.count() ), col_z )
     
     plt.legend ( [ "x", "y", "z" ] )
+
     plt.savefig ( path + "positions.png" )
     #plt.show()
+
+    plt.figure(1)
+
+    plt.plot ( col_x , col_y )
+    plt.savefig ( path + "xy.png" )
+
 
     id_max = [ col_x.idxmax(), col_y.idxmax(), col_z.idxmax() ]
 

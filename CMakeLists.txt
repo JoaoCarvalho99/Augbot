@@ -60,7 +60,6 @@ add_message_files(
   tagFull.msg
   position.msg
   anchorConfig.msg
-  deadReckoning.msg
   #Message1.msg
   #Message2.msg
   )

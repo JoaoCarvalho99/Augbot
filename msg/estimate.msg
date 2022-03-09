@@ -1,5 +1,5 @@
-float64 timestamp = 0
-int32 le_us = 0
+float64 timestamp
+int32 le_us
+int32 accuracy
+bool valid
 position position
-int32 accuracy = 0
-bool valid = False

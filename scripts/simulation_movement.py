@@ -39,7 +39,7 @@ def move():
     rospy.loginfo("moving forward")
     #info.data = "forward"
     #bag.write( 'info', info )
-    rospy.sleep ( 10 )
+    rospy.sleep ( 30 )
 
     twist.linear.x = 0
     pub.publish( twist )
@@ -53,7 +53,7 @@ def move():
     rospy.loginfo("moving backwards")
     #info.data = "backward"
     #bag.write( 'info', info )
-    rospy.sleep ( 10 )
+    rospy.sleep ( 30 )
 
 
 if __name__ == '__main__':
