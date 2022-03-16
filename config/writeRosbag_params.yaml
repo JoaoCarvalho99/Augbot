@@ -4,6 +4,6 @@ topics2rosbag:
       [ "anchorConfig", anchorConfig ],
       [ "least_squares", position ],
       [ "localization", tagFull ],
-      [ "deadReckoning", position ],
-      [ "deadReckoning1", position ]
+      [ "deadReckoning", position ] #,
+   #   [ "deadReckoning1", position ]
     ]

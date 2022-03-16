@@ -56,7 +56,7 @@ def load_yaml():
 def noise ( ):
     global mu, sigma
     n = np.random.default_rng().normal(mu, sigma, 1)
-    rospy.loginfo ( "error: " + str(n[0]) )
+    #rospy.loginfo ( "error: " + str(n[0]) )
     return n[0]
 
 def distance ( anchor, pos ):
@@ -101,9 +101,7 @@ def callback(data):
     pos[1] = tagFullMsg.estimate.position.y 
     pos[2] = tagFullMsg.estimate.position.z 
 
-    #results = least_squares(equations, initial_guess)
-
-    rospy.loginfo( "Simulated Ranges:" )
+    #rospy.loginfo( "Simulated Ranges:" )
 
     i = 0
     while i < nAnchors:
@@ -114,7 +112,7 @@ def callback(data):
         anchorMsg.position.z = anchors[i][2]
         anchorMsg.range = distance( anchors[i], pos )
         anchorMsg.timestamp = now
-        rospy.loginfo( "\t%f", anchorMsg.range )
+        #rospy.loginfo( "\t%f", anchorMsg.range )
         #anchorMsg.range = results.x[i]
         tagFullMsg.anchors.append ( anchorMsg )
         i += 1
@@ -135,8 +133,6 @@ if __name__ == '__main__':
     rospy.init_node('simulation', anonymous=True)
 
     pub = rospy.Publisher('localization', tagFull, queue_size=1)
-
-    #initial_guess = [ 1.0, 1.0, 1.0, 1.0, 1.0 ]
 
     load_yaml()
    
