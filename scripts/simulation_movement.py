@@ -11,7 +11,7 @@ from Augbot.msg import position
 prev = 0
 global bag
 
-
+#callback to alphabot2 position (not used)
 def callback(data):
     global prev
     now = datetime.utcnow().timestamp()
@@ -23,36 +23,28 @@ def callback(data):
     #pos = position()
     #pos = data.transforms[0].transform.translation
     #bag.write( "position", pos )
-    
+
+
 def move():
     global twist
-    #info = String()
     twist.linear.x = 0
     pub.publish( twist )
     rospy.loginfo("STOP")
-    #info.data = "STOP"
-    #bag.write( 'info', info )
     rospy.sleep ( 5 )
 
     twist.linear.x = 0.2
     pub.publish ( twist )
     rospy.loginfo("moving forward")
-    #info.data = "forward"
-    #bag.write( 'info', info )
     rospy.sleep ( 30 )
 
     twist.linear.x = 0
     pub.publish( twist )
     rospy.loginfo("STOP")
-    #info.data = "STOP"
-    #bag.write( 'info', info )
     rospy.sleep ( 5 )
 
     twist.linear.x = -0.2
     pub.publish ( twist )
     rospy.loginfo("moving backwards")
-    #info.data = "backward"
-    #bag.write( 'info', info )
     rospy.sleep ( 30 )
 
 
@@ -64,12 +56,7 @@ if __name__ == '__main__':
 
     twist = Twist()
 
-    #name = "rosbag/simulation/positions/" + str( datetime.now() ) + ".bag"
-    #name = name.replace(' ', '_')
-    #name = name.replace(':', '-')
-    #bag = rosbag.Bag( name, 'w' )
-
-    rospy.Subscriber("tf", TFMessage , callback)
+    #rospy.Subscriber("tf", TFMessage , callback)
 
     twist.linear.y = 0
     twist.linear.z = 0
@@ -86,9 +73,3 @@ if __name__ == '__main__':
     twist.linear.x = 0
     pub.publish( twist )
     rospy.loginfo("STOP")
-    #info.data = "STOP"
-    #bag.write( 'info', info )
-
-    #print ( "wrote to: " + name)
-
-    #bag.close()

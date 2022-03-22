@@ -33,6 +33,7 @@ prev = 0
 mu, sigma = 0, 0.1 # mean and standard deviation
 
 
+#reads mu, sigma, nAnchors and anchors from .yaml
 def load_yaml():
     global nAnchors, anchors, mu, sigma
 
@@ -52,17 +53,19 @@ def load_yaml():
 
     anchors = params.get( "uwb_simulation" ).get("anchors")
 
-
+#adds noise to range calculation
 def noise ( ):
     global mu, sigma
     n = np.random.default_rng().normal(mu, sigma, 1)
     #rospy.loginfo ( "error: " + str(n[0]) )
     return n[0]
 
+#calculates range
 def distance ( anchor, pos ):
     return ( ( pos[0] - anchor[0] )**2 + ( pos[1] - anchor[1] )**2 + ( pos[2] - anchor[2] )**2 )**( 1/2 ) + noise ()
 
 
+#callback to new anchor configuration
 def ConfigCallback ( data ):
     global anchors, nAnchors
 
@@ -77,7 +80,7 @@ def ConfigCallback ( data ):
 
 
 
-
+#callback to new localization chatter position
 def callback(data):
     global prev
     now = datetime.utcnow().timestamp()
@@ -120,7 +123,7 @@ def callback(data):
     pub.publish ( tagFullMsg )
 
 
-    
+#setup of chatters to listen and callback
 def listener():
 
     rospy.Subscriber("tf", TFMessage , callback)

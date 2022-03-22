@@ -7,6 +7,7 @@ import paho.mqtt.client as mqtt
 
 from Augbot.msg import anchorConfig, anchor
 
+#to configure anchor configuration in the UWB simulation
 
 def sendMsg ():
     params = rospy.get_param("~", {})

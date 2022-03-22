@@ -17,9 +17,9 @@ struct Pose
     Orientation orien;
     Position pos;
     */
-    Eigen::Vector3d pos;
-    Eigen::Vector3d teste;
-    Eigen::Vector3d teste1;
+    Eigen::Vector3d pos; 
+    Eigen::Vector3d teste; //test purpose only
+    Eigen::Vector3d teste1; //test purpose only
     Eigen::Matrix3d orien;
 };
 
@@ -28,19 +28,19 @@ class ImuIntegrator
 private:
     Pose pose;
     ros::Time time;
-    Eigen::Vector3d gravity;
+    Eigen::Vector3d gravity; //not used properly
     Eigen::Vector3d velocity;
-    Eigen::Vector3d velocity2;
+    Eigen::Vector3d velocity2; //test purpose only
     visualization_msgs::Marker path;
 
     std::time_t prev = std::time(nullptr);
 
     Augbot::position pubMsg = Augbot::position();
-    Augbot::position pubMsg1 = Augbot::position();
+    Augbot::position pubMsg1 = Augbot::position(); //test purpose only
 
     ros::NodeHandle n;
     ros::Publisher line_pub = n.advertise<Augbot::position>("deadReckoning", 1);
-    ros::Publisher line_pub1 = n.advertise<Augbot::position>("deadReckoning1", 1000);
+    ros::Publisher line_pub1 = n.advertise<Augbot::position>("deadReckoning1", 1000); //test purpose only
 
     double deltaT;
     bool firstT;
@@ -57,7 +57,7 @@ public:
     void publishMessage();
 
     //! Callback function for subscriber.
-    void ImuCallback(const sensor_msgs::Imu::ConstPtr& msg);
+    void ImuCallback(const sensor_msgs::Imu::ConstPtr& msg); //reads message from imu
 
     void setGravity();//const geometry_msgs::Vector3 &msg);
     void updatePath(const Eigen::Vector3d &msg);
@@ -92,6 +92,8 @@ ImuIntegrator::ImuIntegrator() {
   path.points.push_back(p);
 }
 
+
+//my function to calculate orientation from quaternion
 Eigen::Matrix3d setOrientation (const geometry_msgs::Quaternion& msg){
   float q0 = msg.x;
   float q1 = msg.y;
@@ -150,6 +152,8 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
     }
 }
 
+
+//MARTELADA
 void ImuIntegrator::setGravity( )//const geometry_msgs::Vector3 &msg)
 {
   gravity[0] = 0;//msg.x;
@@ -172,6 +176,8 @@ void ImuIntegrator::publishMessage ()
   //line_pub1.publish( pubMsg1 );
 }
 
+
+//not used
 void ImuIntegrator::calcOrientation(const geometry_msgs::Vector3 &msg) {
   Eigen::Matrix3d B;
   B << 0, -msg.z * deltaT, msg.y * deltaT, msg.z * deltaT, 0, -msg.x * deltaT, -msg.y * deltaT, msg.x * deltaT, 0;

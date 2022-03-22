@@ -9,7 +9,7 @@ from Augbot.msg import *
 
 topics = []
 
-
+#reads tuplet ( topic.name, topic.msg_type ) for every topic
 def load_yaml ():
     global topics
 
@@ -27,7 +27,7 @@ def load_yaml ():
 
     print ( topics )
 
-
+#writes every msg to rosbag
 def callback( data, topic ):
     bag.write ( topic[0], data )
 

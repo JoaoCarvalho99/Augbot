@@ -1,3 +1,5 @@
+<!--  logs topics in the params to a rosbag  -->
+
 <launch>
   <node name="writeRosbag" pkg="Augbot" type="writeRosbag.py" output="screen">
     <rosparam command="load" file="$(find Augbot)/config/writeRosbag_params.yaml" />

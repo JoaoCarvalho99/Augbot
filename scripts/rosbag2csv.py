@@ -6,6 +6,9 @@ from optparse import OptionParser
 from datetime import datetime
 import os
 
+
+#converts rosbag 2 .csv file (1 csv to each topic in rosbag)
+
 listStreams = []
 
 def list_to_csv ( stream ):

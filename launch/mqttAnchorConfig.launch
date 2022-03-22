@@ -1,3 +1,5 @@
+<!--  sends msg to configure anchors in the UWB simulation  -->
+
 <launch>
   <node name="mqttConfigAnchor" pkg="Augbot" type="configAnchor.py" output="screen">
     <rosparam command="load" file="$(find Augbot)/config/configAnchorMsg_params.yaml" />

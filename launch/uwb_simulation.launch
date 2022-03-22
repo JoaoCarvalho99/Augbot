@@ -1,7 +1,10 @@
 <launch>
 
+    <!--   moves alphabot2 in gazebo   -->
     <node name="simulation_movement" pkg="Augbot" type="simulation_movement.py"></node>
 
+
+    <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->
     <node name="deadReckoning" pkg="Augbot" type="deadReckoning" output="screen"></node>
 
     <!--  reads data from gazebo by chatter '/tf' and publishes in 'localization' chatter -->
