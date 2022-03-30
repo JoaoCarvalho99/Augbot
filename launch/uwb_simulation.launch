@@ -1,7 +1,8 @@
 <launch>
 
     <!--   moves alphabot2 in gazebo   -->
-    <node name="simulation_movement" pkg="Augbot" type="simulation_movement.py"></node>
+   <!-- <node name="simulation_movement" pkg="Augbot" type="simulation_movement.py"></node> -->
+   <node name="simulation_movement" pkg="Augbot" type="movementSquare.py"></node>
 
 
     <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->

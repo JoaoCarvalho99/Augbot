@@ -35,11 +35,19 @@ if __name__ == '__main__':
     plt.figure(0)
     plt.plot( range( col_x.count() ), col_x )
 
+    #plt.show()
+
     col_y = df.iloc[:,-2]
     plt.plot( range( col_y.count() ), col_y )
 
+    #plt.show()
+
     col_z = df.iloc[:,-1]
     plt.plot( range( col_z.count() ), col_z )
+
+    plt.xlabel("numero da recolha")
+
+    plt.ylabel("position (m)")
     
     plt.legend ( [ "x", "y", "z" ] )
 
@@ -49,6 +57,11 @@ if __name__ == '__main__':
     plt.figure(1)
 
     plt.plot ( col_x , col_y )
+
+    plt.xlabel ("position in x-axis (m)")
+
+    plt.ylabel ("position in y-axis (m")
+
     plt.savefig ( path + "xy.png" )
 
 

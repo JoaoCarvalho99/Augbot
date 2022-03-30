@@ -11,6 +11,7 @@ import os
 
 listStreams = []
 
+#handles anchors[]
 def list_to_csv ( stream ):
     name = stream[:-4] + "_anchors.csv"
     for s in listStreams:
@@ -21,6 +22,7 @@ def list_to_csv ( stream ):
     print ( "new file: " + s.name )
     return s
 
+#write messages from rosbag to .csv
 def message_to_csv( stream, msg ):
     try:
         for s in type(msg).__slots__:
@@ -39,6 +41,7 @@ def message_to_csv( stream, msg ):
                 msg_str = "\"" + msg_str + "\""
             stream.write("," + msg_str)
 
+#creates header of .csv
 def message_type_to_csv(stream, msg, parent_content_name=""):
     try:
         for s in type(msg).__slots__:

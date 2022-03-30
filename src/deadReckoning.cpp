@@ -33,6 +33,9 @@ private:
     Eigen::Vector3d velocity2; //test purpose only
     visualization_msgs::Marker path;
 
+    double g = 0;
+    int nG = 0;
+
     std::time_t prev = std::time(nullptr);
 
     Augbot::position pubMsg = Augbot::position();
@@ -114,6 +117,9 @@ Eigen::Matrix3d setOrientation (const geometry_msgs::Quaternion& msg){
 }
 
 void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
+    nG += 1;
+    g += msg->linear_acceleration.z;
+    //ROS_INFO ( "%f", g/nG);
     if (firstT) {
       time = msg->header.stamp;
       deltaT = 0;
@@ -124,10 +130,6 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
     } else {
       deltaT = (msg->header.stamp - time).toSec();
       time = msg->header.stamp;
-      //std::cout << "data" << std::endl;
-      //std::cout << msg->linear_acceleration << std::endl;
-      //std::cout << msg->angular_velocity << std::endl;
-      //calcOrientation(msg->twist.twist.angular);
       pose.orien = setOrientation( msg->orientation );
       calcPosition( msg->angular_velocity, msg->linear_acceleration );
       //ROS_INFO ( "deltaT = %f", deltaT);
@@ -193,23 +195,18 @@ void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &vel, const geomet
   Eigen::Vector3d acc_g = pose.orien * acc_l;
   // Eigen::Vector3d acc(msg.x - gravity[0], msg.y - gravity[1], msg.z -
   // gravity[2]);
-  //std::cout << deltaT << std::endl;
   //ROS_INFO ( "vel [%f,%f,%f] --- acc [%f,%f,%f]", vel.x, vel.y, vel.z, acc.x, acc.y, acc.z );
-  gravity = Eigen::Vector3d ( 0, 0, acc_g[2] );
+  gravity = Eigen::Vector3d ( 0, 0, 9.8 );
   //ROS_INFO ( "grav [%f,%f,%f] ### acc [%f,%f,%f]", gravity[0], gravity[1], gravity[2], acc_g[0], acc_g[1], acc_g[2] );
   //ROS_INFO ( "acc_g - gravity = %f" , acc_g[2] - gravity[2]);
   velocity = velocity + deltaT * (acc_g - gravity);
   //ROS_INFO ( "vel [%f,%f,%f]", velocity[0], velocity[1], velocity[2] );
   pose.pos = pose.pos + deltaT * velocity;
 
-  //std::cout << "first" << std::endl;
-  //std::cout << velocity << std::endl;
 
   Eigen::Vector3d velocity1 (vel.x,vel.y,vel.z);
   pose.teste = pose.teste + deltaT * velocity1;
   
-  //std::cout << "sec" << std::endl;
-  //std::cout << velocity << std::endl;
 
   Eigen::Vector3d acc_l1(vel.x, vel.y, vel.z);
   Eigen::Vector3d acc_g1 = pose.orien * acc_l1;

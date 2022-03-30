@@ -28,24 +28,29 @@ def callback(data):
 def move():
     global twist
     twist.linear.x = 0
+    twist.angular.z = 0
     pub.publish( twist )
     rospy.loginfo("STOP")
-    rospy.sleep ( 5 )
+    rospy.sleep ( 10 )
 
-    twist.linear.x = 0.2
-    pub.publish ( twist )
-    rospy.loginfo("moving forward")
-    rospy.sleep ( 30 )
+    twist.linear.x = 1
+    twist.angular.z = 0
+    pub.publish( twist )
+    rospy.loginfo("MOVING FORWARD")
+    rospy.sleep ( 60 )
 
     twist.linear.x = 0
+    twist.angular.z = 0
     pub.publish( twist )
     rospy.loginfo("STOP")
-    rospy.sleep ( 5 )
+    rospy.sleep ( 20 )
 
-    twist.linear.x = -0.2
-    pub.publish ( twist )
-    rospy.loginfo("moving backwards")
-    rospy.sleep ( 30 )
+    #turn right 90º degrees
+    twist.linear.x = 0
+    twist.angular.z = 0.3
+    rospy.loginfo("TURN")
+    pub.publish( twist )
+    rospy.sleep ( 6 )
 
 
 if __name__ == '__main__':
@@ -71,5 +76,6 @@ if __name__ == '__main__':
 
     info = String()
     twist.linear.x = 0
+    twist.angular.z = 0
     pub.publish( twist )
     rospy.loginfo("STOP")
