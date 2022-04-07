@@ -6,6 +6,10 @@
 #include <nav_msgs/Odometry.h>
 #include <Eigen/Dense>
 #include <cmath>
+
+#include <chrono>
+#include <iostream>
+#include <sys/time.h>
 #include <ctime>
 
 #include "Augbot/position.h"
@@ -36,7 +40,7 @@ private:
     double g = 0;
     int nG = 0;
 
-    std::time_t prev = std::time(nullptr);
+    double prev = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     Augbot::position pubMsg = Augbot::position();
     Augbot::position pubMsg1 = Augbot::position(); //test purpose only
@@ -76,8 +80,6 @@ ImuIntegrator::ImuIntegrator() {
   pose.orien = Eigen::Matrix3d::Identity();
   velocity = zero;
   firstT = true;
-
-  const auto prev = std::chrono::system_clock::now();
 
   // Line strip is blue
   path.color.b = 1.0;
@@ -135,19 +137,16 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
       //ROS_INFO ( "deltaT = %f", deltaT);
       updatePath(pose.pos);
 
-      std::time_t now = std::time(nullptr);
+      auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
-      if ( now - prev > 1 ) {
+     if ( now - prev > 100 ) {
         prev = now;
 
         pubMsg.x = pose.pos[0];
         pubMsg.y = pose.pos[1];
         pubMsg.z = pose.pos[2];
-        pubMsg1.x = pose.teste[0];
-        pubMsg1.x = pose.teste[1];
-        pubMsg1.x = pose.teste[2];
 
-        ROS_INFO ( "[%f,%f,%f] ... [%f,%f,%f]", pubMsg.x, pubMsg.y, pubMsg.z, pubMsg1.x, pubMsg1.y, pubMsg1.z);
+        ROS_INFO ( "[%f,%f,%f]", pubMsg.x, pubMsg.y, pubMsg.z);
         
         publishMessage();
       }
@@ -196,7 +195,7 @@ void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &vel, const geomet
   // Eigen::Vector3d acc(msg.x - gravity[0], msg.y - gravity[1], msg.z -
   // gravity[2]);
   //ROS_INFO ( "vel [%f,%f,%f] --- acc [%f,%f,%f]", vel.x, vel.y, vel.z, acc.x, acc.y, acc.z );
-  gravity = Eigen::Vector3d ( 0, 0, 9.8 );
+  gravity = Eigen::Vector3d ( 0, 0, acc_g[2] );
   //ROS_INFO ( "grav [%f,%f,%f] ### acc [%f,%f,%f]", gravity[0], gravity[1], gravity[2], acc_g[0], acc_g[1], acc_g[2] );
   //ROS_INFO ( "acc_g - gravity = %f" , acc_g[2] - gravity[2]);
   velocity = velocity + deltaT * (acc_g - gravity);
@@ -204,14 +203,14 @@ void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &vel, const geomet
   pose.pos = pose.pos + deltaT * velocity;
 
 
-  Eigen::Vector3d velocity1 (vel.x,vel.y,vel.z);
+/*  Eigen::Vector3d velocity1 (vel.x,vel.y,vel.z);
   pose.teste = pose.teste + deltaT * velocity1;
   
 
   Eigen::Vector3d acc_l1(vel.x, vel.y, vel.z);
   Eigen::Vector3d acc_g1 = pose.orien * acc_l1;
   pose.teste1 = pose.teste1 + deltaT * acc_g1;
-
+*/
   //ROS_INFO ( "POS [%f,%f,%f] ... [%f,%f,%f] ... [%f,%f,%f]", 
   //pose.pos[0], pose.pos[1], pose.pos[2], pose.teste[0], pose.teste[1], pose.teste[2], pose.teste1[0], pose.teste1[1], pose.teste1[2] );
 
