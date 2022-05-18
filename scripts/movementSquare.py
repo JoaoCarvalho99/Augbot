@@ -37,7 +37,7 @@ def move():
     global twist, yaw, x, y
     i = 0
     wanted_yaw = [0.00000000, -math.pi/2, math.pi, math.pi/2]
-    distance = 10
+    distance = 12
     while i < 4:
         #turn right 90º degrees
         turn ( wanted_yaw[i], 0 )
@@ -161,7 +161,7 @@ if __name__ == '__main__':
     pubMovement.publish( twist )
 
     nSquares = 0
-    while nSquares < 5:
+    while nSquares < 7:
         move()
         nSquares += 1
 

@@ -29,6 +29,7 @@ def load_yaml ():
 
 #writes every msg to rosbag
 def callback( data, topic ):
+    rospy.loginfo ( topic[0] )
     bag.write ( topic[0], data )
 
 

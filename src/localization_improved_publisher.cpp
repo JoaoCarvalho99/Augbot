@@ -18,7 +18,11 @@
  */
 
 
-
+void load_yaml(std::string &stdIn){
+   if (ros::param::has("/port")) {
+        ros::param::get("/port", stdIn);
+   }
+}
 
 
 /**
@@ -169,8 +173,7 @@ int main(int argc, char **argv)
 
     std::string stdIn = "/dev/ttyACM0";
 
-    if ( argc > 1 )
-        stdIn = argv[1];
+    load_yaml(stdIn);
     
     serial::Serial ser;
     std::string input = "";

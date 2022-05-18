@@ -194,12 +194,12 @@ void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &vel, const geomet
   Eigen::Vector3d acc_g = pose.orien * acc_l;
   // Eigen::Vector3d acc(msg.x - gravity[0], msg.y - gravity[1], msg.z -
   // gravity[2]);
-  //ROS_INFO ( "vel [%f,%f,%f] --- acc [%f,%f,%f]", vel.x, vel.y, vel.z, acc.x, acc.y, acc.z );
+  ROS_INFO ( "vel [%f,%f,%f] --- acc [%f,%f,%f]", vel.x, vel.y, vel.z, acc.x, acc.y, acc.z );
   gravity = Eigen::Vector3d ( 0, 0, acc_g[2] );
-  //ROS_INFO ( "grav [%f,%f,%f] ### acc [%f,%f,%f]", gravity[0], gravity[1], gravity[2], acc_g[0], acc_g[1], acc_g[2] );
+  ROS_INFO ( "grav [%f,%f,%f] ### acc [%f,%f,%f]", gravity[0], gravity[1], gravity[2], acc_g[0], acc_g[1], acc_g[2] );
   //ROS_INFO ( "acc_g - gravity = %f" , acc_g[2] - gravity[2]);
   velocity = velocity + deltaT * (acc_g - gravity);
-  //ROS_INFO ( "vel [%f,%f,%f]", velocity[0], velocity[1], velocity[2] );
+  ROS_INFO ( "vel [%f,%f,%f]", velocity[0], velocity[1], velocity[2] );
   pose.pos = pose.pos + deltaT * velocity;
 
 
@@ -223,5 +223,6 @@ int main(int argc, char **argv) {
 
 
   ros::Subscriber Imu_message = nh.subscribe("/imu", 1000, &ImuIntegrator::ImuCallback, imu_integrator);
+  // nh.subscribe("/imu", 1000, &ImuIntegrator::ImuCallback, imu_integrator);
   ros::spin();
 }
