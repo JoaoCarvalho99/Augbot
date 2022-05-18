@@ -240,3 +240,6 @@ target_link_libraries(localization_listener ${catkin_LIBRARIES})
 
 add_executable(deadReckoning src/deadReckoning.cpp)
 target_link_libraries(deadReckoning ${catkin_LIBRARIES})
+
+add_executable(imu src/imu.cpp)
+target_link_libraries(imu ${catkin_LIBRARIES})

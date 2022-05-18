@@ -31,12 +31,6 @@
       <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
     </node>
 
-      <!--  subscribes 'mqtt_anchorConfig_output' mqtt and publishes to chatter "anchorConfig"  -->
-    <node name="mqttBridgeConfig" pkg="Augbot" type="mqttBridge.py" output="screen">
-      <param name="subset" value="anchorConfig" /> 
-      <param name="toDo" value="mqttListen" /> 
-      <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
-    </node>
 
 </launch>
 
