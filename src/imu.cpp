@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 
     ros::Publisher chatter_pub = n.advertise<sensor_msgs::Imu>("/imu", 1);
 
-    std::string stdIn = "/dev/ttyACM0";//ver isto
+    std::string stdIn = "/dev/ttyACM1";//ver isto
 
     load_yaml(stdIn);
 
@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 
     if ( ser.isOpen() )
     {
-        ROS_INFO_STREAM("Serial Port: " + stdIn + " initialized");
+        ROS_INFO_STREAM("IMU: Serial Port: " + stdIn + " initialized");
     } else
     {
         return -1;

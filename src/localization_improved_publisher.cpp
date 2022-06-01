@@ -194,7 +194,7 @@ int main(int argc, char **argv)
 
     if ( ser.isOpen() )
     {
-        ROS_INFO_STREAM("Serial Port: " + stdIn + " initialized");
+        ROS_INFO_STREAM("DWM: Serial Port: " + stdIn + " initialized");
     } else
     {
         return -1;
