@@ -131,10 +131,12 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
       firstT = false;
     } else {
       deltaT = (msg->header.stamp - time).toSec();
+      std::cout << time << std::endl;
       time = msg->header.stamp;
       pose.orien = setOrientation( msg->orientation );
       calcPosition( msg->angular_velocity, msg->linear_acceleration );
-      //ROS_INFO ( "deltaT = %f", deltaT);
+      ROS_INFO ( "deltaT = %f", deltaT);
+      std::cout << time << std::endl;
       updatePath(pose.pos);
 
       auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -196,10 +198,10 @@ void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &vel, const geomet
   // gravity[2]);
   ROS_INFO ( "vel [%f,%f,%f] --- acc [%f,%f,%f]", vel.x, vel.y, vel.z, acc.x, acc.y, acc.z );
   gravity = Eigen::Vector3d ( 0, 0, acc_g[2] );
-  ROS_INFO ( "grav [%f,%f,%f] ### acc [%f,%f,%f]", gravity[0], gravity[1], gravity[2], acc_g[0], acc_g[1], acc_g[2] );
+  //ROS_INFO ( "grav [%f,%f,%f] ### acc [%f,%f,%f]", gravity[0], gravity[1], gravity[2], acc_g[0], acc_g[1], acc_g[2] );
   //ROS_INFO ( "acc_g - gravity = %f" , acc_g[2] - gravity[2]);
   velocity = velocity + deltaT * (acc_g - gravity);
-  ROS_INFO ( "vel [%f,%f,%f]", velocity[0], velocity[1], velocity[2] );
+  //ROS_INFO ( "vel [%f,%f,%f]", velocity[0], velocity[1], velocity[2] );
   pose.pos = pose.pos + deltaT * velocity;
 
 
@@ -222,7 +224,7 @@ int main(int argc, char **argv) {
   ImuIntegrator *imu_integrator = new ImuIntegrator();//line);
 
 
-  ros::Subscriber Imu_message = nh.subscribe("/imu", 1000, &ImuIntegrator::ImuCallback, imu_integrator);
+  ros::Subscriber Imu_message = nh.subscribe("/imu", 1, &ImuIntegrator::ImuCallback, imu_integrator);
   // nh.subscribe("/imu", 1000, &ImuIntegrator::ImuCallback, imu_integrator);
   ros::spin();
 }

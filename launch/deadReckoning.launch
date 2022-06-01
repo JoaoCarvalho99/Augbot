@@ -2,7 +2,8 @@
 
     <!--   reads and parses imu data from serial port and publishes to /imu -->
     <node name="imu" pkg="Augbot" type="imu" output="screen">
-    <param name="port" value="/dev/ttyACM0" /> 
+        <param name="port" value="/dev/ttyACM0" /> 
+        <param name="sensor" value="micro:bit" />
     </node>
 
     <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->

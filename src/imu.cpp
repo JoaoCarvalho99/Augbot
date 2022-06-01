@@ -11,11 +11,23 @@ struct Quaternion
     double w, x, y, z;
 };
 
-void load_yaml(std::string &stdIn){
-   if (ros::param::has("port")) {
-        ros::param::get("port", stdIn);
-   }
+void load_yaml(ros::NodeHandle n, std::string &stdIn, std::string &sensor){
+    if ( n.hasParam("port")) {
+        n.getParam( "port", stdIn);
+    }
+    if ( n.hasParam("sensor")) {
+        n.getParam( "sensor", sensor);
+    }
+}
 
+double milligToAcc (double value ) {
+    float constant  = 0.00980665;
+    return value * constant;
+}
+
+double headingToYaw (double heading){
+    float constant = M_PI / 180;
+    return heading * constant;
 }
 
 geometry_msgs::Quaternion ToQuaternion(double yaw, double pitch, double roll) // yaw (Z), pitch (Y), roll (X)
@@ -37,20 +49,35 @@ geometry_msgs::Quaternion ToQuaternion(double yaw, double pitch, double roll) //
     return q;
 }
 
-void parser( std::string input, ros::Publisher chatter_pub )
+void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
 {
     sensor_msgs::Imu imuMsg = sensor_msgs::Imu();
 
-    ROS_INFO ( "%s", input.c_str() );
-    nlohmann::json data = nlohmann::json::parse(input);
-    geometry_msgs::Quaternion q = ToQuaternion ( data["yaw"], data["pitch"], data["roll"]);
+    //ROS_INFO ( "%s", input.c_str() );
+    nlohmann::json data;
+
+    if ( nlohmann::json::accept ( input ) ){
+        data = nlohmann::json::parse(input);
+    }
+    else {
+        ROS_INFO("Unable to parse: %s", input.c_str() );
+        return;
+    }
+    geometry_msgs::Quaternion q;
+    if ( sensor == "micro:bit" ){
+        q = ToQuaternion ( headingToYaw(data["heading"]), 0, 0 );
+    }
+    if ( sensor == "pi:pico" ) {
+        q = ToQuaternion ( data["yaw"], data["pitch"], data["roll"] );
+    }
 
     imuMsg.orientation = q;
-    imuMsg.linear_acceleration.x = data["accel_x"];
-    imuMsg.linear_acceleration.y = data["accel_y"];
-    imuMsg.linear_acceleration.x = data["accel_z"];
+    imuMsg.linear_acceleration.x = milligToAcc( data["accel_x"] );
+    imuMsg.linear_acceleration.y = milligToAcc( data["accel_y"] );
+    imuMsg.linear_acceleration.z = milligToAcc( data["accel_z"] );
+    float timestamp = int(data["timestamp"])/1000 + (int(data["timestamp"])%1000)/1000.0 ;
 
-    imuMsg.header.stamp = ros::Time ( data["timestamp"] );
+    imuMsg.header.stamp = ros::Time ( timestamp );
 
     chatter_pub.publish( imuMsg );
 }
@@ -58,13 +85,14 @@ void parser( std::string input, ros::Publisher chatter_pub )
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "Imu_publisher");
-    ros::NodeHandle n;
+    ros::NodeHandle n("~");
 
     ros::Publisher chatter_pub = n.advertise<sensor_msgs::Imu>("/imu", 1);
 
-    std::string stdIn = "/dev/ttyACM1";//ver isto
+    std::string stdIn = "/dev/ttyACM1";
+    std::string sensor = "micro:bit";
 
-    load_yaml(stdIn);
+    load_yaml(n, stdIn, sensor);
 
 
     serial::Serial ser;
@@ -105,9 +133,9 @@ int main(int argc, char **argv) {
 
         if ( input != "" ){
 
-            ROS_INFO("%s", input.c_str());
+            //ROS_INFO("%s", input.c_str());
 
-            parser ( input, chatter_pub );
+            parser ( input, chatter_pub, sensor );
 
             input = "";
 
