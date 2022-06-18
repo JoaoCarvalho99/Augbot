@@ -26,6 +26,9 @@ double milligToAcc (double value ) {
 }
 
 double headingToYaw (double heading){
+    heading += 180;
+    if ( heading > 360 )
+        heading -= 360;
     float constant = M_PI / 180;
     return heading * constant;
 }

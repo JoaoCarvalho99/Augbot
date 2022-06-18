@@ -11,6 +11,10 @@ mqttListen:
     msgType: tagFull
     listenTo: "/mqtt_tagFull"
     pubTo: "localization"
+  leastSquares:
+    msgType: position
+    listenTo: "/mqtt_deadReckoning"
+    pubTo: "deadReckoning"
 mqttPublish:
   leastSquares:
     msgType: position
@@ -20,3 +24,8 @@ mqttPublish:
     msgType: tagFull
     listenTo: "localization"
     pubTo: "/mqtt_tagFull"
+  tagFull:
+    msgType: position
+    listenTo: "deadReckoning"
+    pubTo: "/mqtt_deadReckoning"
+  

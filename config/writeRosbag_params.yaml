@@ -1,9 +1,14 @@
 topics2rosbag:
   topics:
     [
-      [ "anchorConfig", anchorConfig ],
-      [ "least_squares", position ],
-      [ "localization", tagFull ],
-      [ "deadReckoning", position ] #,
-   #   [ "deadReckoning1", position ]
+    #  [ "anchorConfig", anchorConfig ],
+    #  [ "least_squares", position ],
+    #  [ "localization", tagFull ],
+    #  [ "deadReckoning", position ] #,
+  #   [ "deadReckoning1", position ]
+
+      [ "/mqtt_least_squares", position ],
+      [ "/mqtt_tagFull", tagFull ],
+      [ "/mqtt_deadReckoning", position ]
+
     ]

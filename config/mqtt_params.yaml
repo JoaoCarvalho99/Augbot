@@ -27,6 +27,15 @@ bridge:
     msg_type: Augbot.msg:position
     topic_from: mqtt_least_squares
     topic_to: /mqtt_least_squares_output
+  #deadReckoning
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: Augbot.msg:position
+    topic_from: /mqtt_deadReckoning
+    topic_to: mqtt_deadReckoning
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: Augbot.msg:position
+    topic_from: mqtt_deadReckoning
+    topic_to: /mqtt_deadReckoning_output
   #decawave position
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: Augbot.msg:position

@@ -66,7 +66,7 @@ public:
     //! Callback function for subscriber.
     void ImuCallback(const sensor_msgs::Imu::ConstPtr& msg); //reads message from imu
 
-    void setGravity();//const geometry_msgs::Vector3 &msg);
+    void setGravity(const geometry_msgs::Vector3 &msg);
     void updatePath(const Eigen::Vector3d &msg);
     void calcPosition(const geometry_msgs::Vector3 &vel, const geometry_msgs::Vector3 &acc);
     void calcOrientation(const geometry_msgs::Vector3 &msg);
@@ -125,7 +125,7 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
     if (firstT) {
       time = msg->header.stamp;
       deltaT = 0;
-      setGravity();//msg->twist.twist.linear;
+      setGravity( msg->linear_acceleration );//msg->twist.twist.linear;
       pose.pos = Eigen::Vector3d(0, 0, 0);
       pose.teste = pose.pos;
       firstT = false;
@@ -157,7 +157,7 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
 
 
 //MARTELADA
-void ImuIntegrator::setGravity( )//const geometry_msgs::Vector3 &msg)
+void ImuIntegrator::setGravity( const geometry_msgs::Vector3 &msg)
 {
   gravity[0] = 0;//msg.x;
   gravity[1] = 0;//msg.y;
@@ -197,7 +197,6 @@ void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &vel, const geomet
   // Eigen::Vector3d acc(msg.x - gravity[0], msg.y - gravity[1], msg.z -
   // gravity[2]);
   ROS_INFO ( "vel [%f,%f,%f] --- acc [%f,%f,%f]", vel.x, vel.y, vel.z, acc.x, acc.y, acc.z );
-  gravity = Eigen::Vector3d ( 0, 0, acc_g[2] );
   //ROS_INFO ( "grav [%f,%f,%f] ### acc [%f,%f,%f]", gravity[0], gravity[1], gravity[2], acc_g[0], acc_g[1], acc_g[2] );
   //ROS_INFO ( "acc_g - gravity = %f" , acc_g[2] - gravity[2]);
   velocity = velocity + deltaT * (acc_g - gravity);
