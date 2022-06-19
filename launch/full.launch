@@ -1,18 +1,18 @@
 <launch>
 
     <!--   reads and parses uwb data from serial port and publishes to /location -->
-    <node pkg="Augbot" name="UWBreader" type="localization_improved_publisher">
-    <param name="port" value="/dev/ttyACM0" /> 
+    <node pkg="Augbot" name="UWBreader" type="localization_improved_publisher" output="screen">
+    <param name="port" value="/dev/ttyACM1" /> 
     </node>
 
     <!--   reads and parses imu data from serial port and publishes to /imu -->
-    <node name="imu" pkg="Augbot" type="imu">
-      <param name="port" value="/dev/ttyACM1" /> 
-      <param name="sensor" value="micro:bit" />
+    <node name="imu" pkg="Augbot" type="imu" output="screen">
+        <param name="port" value="/dev/ttyACM0" /> 
+        <param name="sensor" value="micro:bit" /> <!-- micro:bit or pi:pico -->
     </node>
 
     <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->
-    <node name="deadReckoning" pkg="Augbot" type="deadReckoning" output="screen"></node>
+   <node name="deadReckoning" pkg="Augbot" type="deadReckoning" output="screen"></node>
 
 
     <!--  subscribes 'localization' chatter and publishes tagFull in mqtt  -->
@@ -33,7 +33,7 @@
     </node>
 
       <!--  subscribes 'deadReckoning' chatter and publishes position in mqtt  -->
-    <node name="mqttBridgeLS" pkg="Augbot" type="mqttBridge.py" output="screen">
+    <node name="mqttBridgeDR" pkg="Augbot" type="mqttBridge.py" output="screen">
       <param name="subset" value="deadReckoning" /> 
       <param name="toDo" value="mqttPublish" /> 
       <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
