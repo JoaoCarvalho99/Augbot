@@ -2,7 +2,7 @@
 
     <!--   reads and parses uwb data from serial port and publishes to /location -->
     <node pkg="Augbot" name="UWBreader" type="localization_improved_publisher" output="screen">
-    <param name="port" value="/dev/ttyACM1" /> 
+	<param name="port" value="/dev/ttyACM1" /> 
     </node>
 
     <!--   reads and parses imu data from serial port and publishes to /imu -->
