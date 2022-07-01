@@ -171,7 +171,7 @@ int main(int argc, char **argv)
 
     ros::Publisher chatter_pub = n.advertise<Augbot::tagFull>("localization", 1000);
 
-    std::string stdIn = "/dev/ttyACM0";
+    std::string stdIn = "/dev/ttyACM1";
 
     load_yaml(stdIn);
     

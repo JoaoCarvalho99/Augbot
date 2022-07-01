@@ -16,29 +16,29 @@
 
 
     <!--  subscribes 'localization' chatter and publishes tagFull in mqtt  -->
-    <node name="mqttBridgeTagFull" pkg="Augbot" type="mqttBridge.py" output="screen">
+<!--    <node name="mqttBridgeTagFull" pkg="Augbot" type="mqttBridge.py" output="screen">
       <param name="subset" value="tagFull" /> 
       <param name="toDo" value="mqttPublish" /> 
       <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
     </node>
-
+-->
     <!--   subscribes 'localization' chatter, transform data and publishes 'least_squares' chatter -->
     <node pkg="Augbot" name="least_squares" type="least_squares.py" output="screen"/>
 
       <!--  subscribes 'least_squares' chatter and publishes position in mqtt  -->
-    <node name="mqttBridgeLS" pkg="Augbot" type="mqttBridge.py" output="screen">
+<!--    <node name="mqttBridgeLS" pkg="Augbot" type="mqttBridge.py" output="screen">
       <param name="subset" value="leastSquares" /> 
       <param name="toDo" value="mqttPublish" /> 
       <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
     </node>
-
+-->
       <!--  subscribes 'deadReckoning' chatter and publishes position in mqtt  -->
-    <node name="mqttBridgeDR" pkg="Augbot" type="mqttBridge.py" output="screen">
+<!--    <node name="mqttBridgeDR" pkg="Augbot" type="mqttBridge.py" output="screen">
       <param name="subset" value="deadReckoning" /> 
       <param name="toDo" value="mqttPublish" /> 
       <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
     </node>
-
+-->
 
 </launch>
 

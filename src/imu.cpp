@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
 
     ros::Publisher chatter_pub = n.advertise<sensor_msgs::Imu>("/imu", 1);
 
-    std::string stdIn = "/dev/ttyACM1";
+    std::string stdIn = "/dev/ttyACM0";
     std::string sensor = "micro:bit";
 
     load_yaml(n, stdIn, sensor);
