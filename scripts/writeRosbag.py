@@ -6,6 +6,7 @@ import os
 
 
 from Augbot.msg import *
+from sensor_msgs.msg import *
 
 topics = []
 
