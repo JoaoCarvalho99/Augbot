@@ -65,6 +65,9 @@ public:
     void updatePath(const Eigen::Vector3d &msg);
     void calcPosition(const geometry_msgs::Vector3 &vel, const geometry_msgs::Vector3 &acc);
     void calcOrientation(const geometry_msgs::Vector3 &msg);
+
+
+    void reduceError( Eigen::Vector3d &acc);
 };
 
 ImuIntegrator::ImuIntegrator() {
@@ -145,9 +148,18 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
 //MARTELADA
 void ImuIntegrator::setGravity( const geometry_msgs::Vector3 &msg)
 {
-  gravity[0] = msg.x;
-  gravity[1] = msg.y;
-  gravity[2] = msg.z;
+  gravity[0] =  msg.x;
+  gravity[1] =  msg.y;
+  gravity[2] =  msg.z;
+
+
+/*  gravity[0] = abs ( msg.x );
+  gravity[1] = abs ( msg.y);
+  gravity[2] = abs ( msg.z );
+
+  if ( gravity[0] > gravity[1] )
+    gravity[1] = gravity[0];
+  else gravity[0] = gravity[1];*/
 }
 
 void ImuIntegrator::updatePath(const Eigen::Vector3d &msg) {
@@ -172,14 +184,35 @@ void ImuIntegrator::calcOrientation(const geometry_msgs::Vector3 &msg) {
   pose.orien = pose.orien * (Eigen::Matrix3d::Identity() + (std::sin(sigma) / sigma) * B - ((1 - std::cos(sigma)) / std::pow(sigma, 2)) * B * B);
 }
 
+void ImuIntegrator::reduceError( Eigen::Vector3d &acc) {
+  int i, total = 0;
+  for ( i = 0; i < 3; i++ ){
+    if ( abs( acc[i] ) <= 1.5 * abs ( gravity[i] ) ){
+      acc[i] = 0;
+      total+=1;
+    }
+    else {
+      if ( acc[i] > 0 )
+        acc[i] -= gravity[i];
+      else if ( acc[i] < 0 )
+        acc[i] += gravity[i];
+    }
+  }
+  //if ( total == 3 )
+  //  velocity = Eigen::Vector3d(0, 0, 0);
+}
+
 void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &vel, const geometry_msgs::Vector3 &acc) {
   Eigen::Vector3d acc_l(acc.x - gravity[0], acc.y - gravity[1], acc.z - gravity[2]);
+  //Eigen::Vector3d acc_l ( acc.x, acc.y, acc.z);
+  //reduceError ( acc_l );
   Eigen::Vector3d acc_g = pose.orien * acc_l;
   ROS_INFO ( "vel [%f,%f,%f] ### acc [%f,%f,%f] --- grav [%f,%f,%f] === acc_l [%f,%f,%f] -> acc_g [%f,%f,%f]"
 , vel.x, vel.y, vel.z, acc.x, acc.y, acc.z, gravity[0], gravity[1], gravity[2], acc_l[0], acc_l[1], acc_l[2], acc_g[0], acc_g[1], acc_g[2] );
   velocity = velocity + deltaT * (acc_g);
   pose.pos = pose.pos + deltaT * velocity;
 
+  ROS_INFO ("velocity [%f,%f,%f]", velocity[0], velocity[1], velocity[2]);
 }
 
 int main(int argc, char **argv) {

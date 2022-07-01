@@ -56,7 +56,7 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
 {
     sensor_msgs::Imu imuMsg = sensor_msgs::Imu();
 
-    //ROS_INFO ( "%s", input.c_str() );
+    ROS_INFO ( "%s", input.c_str() );
     nlohmann::json data;
 
     if ( nlohmann::json::accept ( input ) ){
@@ -81,7 +81,6 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
     float timestamp = int(data["timestamp"])/1000 + (int(data["timestamp"])%1000)/1000.0 ;
 
     imuMsg.header.stamp = ros::Time ( timestamp );
-
     chatter_pub.publish( imuMsg );
 }
 
