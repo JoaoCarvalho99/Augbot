@@ -4,7 +4,7 @@ import RPi.GPIO as GPIO
 from AlphaBot2 import AlphaBot2
 from rpi_ws281x import Adafruit_NeoPixel, Color
 from TRSensors import TRSensor
-import time
+import time, sys
 
 Button = 7
 
@@ -20,10 +20,20 @@ LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
 LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)	
 
-maximum = 100;
+
+
+maximum = 40;
 j = 0
 integral = 0;
 last_proportional = 0
+
+
+#originals P = 0.3, I = 1/10000, D = 2
+P = 0.6
+I = 0 #0.00005
+D = 0
+
+S = 0.01
 
 def Wheel(pos):
 #	"""Generate rainbow colors across 0-255 positions."""
@@ -68,7 +78,12 @@ print(TR.calibratedMax)
 while (GPIO.input(Button) != 0):
 	position,Sensors = TR.readLine()
 	print(position,Sensors)
+       
 	time.sleep(0.05)
+	#except:
+	#	Ab.setPWMA(0)
+	#	Ab.setPWMB(0)
+	#	sys.exit(0)
 Ab.forward()
 
 while True:
@@ -97,8 +112,8 @@ while True:
 		// the proportional, integral, and derivative terms are multiplied to
 		// improve performance.
 		'''
-		power_difference = proportional/30  #+ integral/10000 + derivative*2  
-
+		#power_difference = proportional/30  #+ integral/10000 + derivative*2  
+		power_difference = proportional*P + integral*I + derivative*D
 		if (power_difference > maximum):
 			power_difference = maximum
 		if (power_difference < - maximum):
@@ -110,10 +125,10 @@ while True:
 		else:
 			Ab.setPWMA(maximum);
 			Ab.setPWMB(maximum - power_difference)
-		
-	for i in range(0,strip.numPixels()):
-		strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) and 255))
-	strip.show();
-	j += 1
-	if(j > 256*4): 
-		j= 0
+		time.sleep(S)	
+	#for i in range(0,strip.numPixels()):
+	#	strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) and 255))
+	#strip.show();
+	#j += 1
+	#if(j > 256*4): 
+	#	j= 0
