@@ -20,8 +20,14 @@ void load_yaml(ros::NodeHandle n, std::string &stdIn, std::string &sensor){
     }
 }
 
-double milligToAcc (double value ) {
+double AccToMillig (double value ) {
+    float constant  = 1000.0/16384.0;
+    return value * constant;
+}
+
+double milligToMSsquare (double value ) {
     float constant  = 0.00980665;
+    ROS_INFO ( "value: %f", value);
     return value * constant;
 }
 
@@ -69,15 +75,17 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
     geometry_msgs::Quaternion q;
     if ( sensor == "micro:bit" ){
         q = ToQuaternion ( headingToYaw(data["heading"]), 0, 0 );
+        imuMsg.linear_acceleration.x = milligToMSsquare( data["accel_y"] );
     }
     if ( sensor == "pi:pico" ) {
         q = ToQuaternion ( data["yaw"], data["pitch"], data["roll"] );
+        imuMsg.linear_acceleration.x = milligToMSsquare( AccToMillig ( data["accel_y"] ) );
     }
 
     imuMsg.orientation = q;
-    imuMsg.linear_acceleration.y = 0;//milligToAcc( data["accel_x"] ); //TROCAR X POR Y (ATENCAO)
-    imuMsg.linear_acceleration.x = milligToAcc( data["accel_y"] );
-    imuMsg.linear_acceleration.z = 0;//milligToAcc( data["accel_z"] );
+    imuMsg.linear_acceleration.y = 0;//milligToMSsquare( data["accel_x"] ); //TROCAR X POR Y (ATENCAO)
+    
+    imuMsg.linear_acceleration.z = 0;//milligToMSsquare( data["accel_z"] );
     float timestamp = int(data["timestamp"])/1000 + (int(data["timestamp"])%1000)/1000.0 ;
 
     imuMsg.header.stamp = ros::Time ( timestamp );
@@ -92,13 +100,15 @@ int main(int argc, char **argv) {
     ros::Publisher chatter_pub = n.advertise<sensor_msgs::Imu>("/imu", 1);
 
     std::string stdIn = "/dev/ttyACM0";
-    std::string sensor = "micro:bit";
+    std::string sensor = "micro:bit";//"pi:pico";
 
-    load_yaml(n, stdIn, sensor);
+    //load_yaml(n, stdIn, sensor);
 
 
     serial::Serial ser;
     std::string input = "";
+
+    std::cout << "sensor: " + sensor << std::endl;
 
 
     try
@@ -126,24 +136,19 @@ int main(int argc, char **argv) {
     while ( ros::ok() && ser.isOpen() )
     {
 
-       while ( ser.available() )
+       if ( ser.available() )
        {
+            while ( ser.available() )
+                input.append( ser.readline() );
 
-            input.append( ser.readline() );
-
-        }
-
-        if ( input != "" ){
-
-            //ROS_INFO("%s", input.c_str());
+            ROS_INFO("%s", input.c_str());
 
             parser ( input, chatter_pub, sensor );
 
             input = "";
 
         }
-
-        ros::spinOnce();
+        else ros::Duration(0.01).sleep();
 
     }
 

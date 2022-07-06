@@ -203,9 +203,9 @@ void ImuIntegrator::reduceError( Eigen::Vector3d &acc) {
 }
 
 void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &vel, const geometry_msgs::Vector3 &acc) {
-  //Eigen::Vector3d acc_l(acc.x - gravity[0], acc.y - gravity[1], acc.z - gravity[2]);
-  Eigen::Vector3d acc_l ( acc.x, acc.y, acc.z);
-  reduceError ( acc_l );
+  Eigen::Vector3d acc_l(acc.x - gravity[0], acc.y - gravity[1], acc.z - gravity[2]);
+  //Eigen::Vector3d acc_l ( acc.x, acc.y, acc.z);
+  //reduceError ( acc_l );
   Eigen::Vector3d acc_g = pose.orien * acc_l;
   ROS_INFO ( "vel [%f,%f,%f] ### acc [%f,%f,%f] --- grav [%f,%f,%f] === acc_l [%f,%f,%f] -> acc_g [%f,%f,%f]"
 , vel.x, vel.y, vel.z, acc.x, acc.y, acc.z, gravity[0], gravity[1], gravity[2], acc_l[0], acc_l[1], acc_l[2], acc_g[0], acc_g[1], acc_g[2] );

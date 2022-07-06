@@ -203,27 +203,19 @@ int main(int argc, char **argv)
 
     while ( ros::ok() && ser.isOpen() )
     {
-
-       while ( ser.available() )
-       {
-
-            input.append( ser.readline() );
-
-        }
-
-        if ( input != "" ){
+        if ( ser.available() ) {
+            while ( ser.available() )
+                input.append( ser.readline() );
 
             ROS_INFO("%s", input.c_str());
 
             parser ( input, chatter_pub );
 
             input = "";
-
         }
-
-        ros::spinOnce();
-
+        else ros::Duration(0.01).sleep();
     }
+
 
 
     ser.close();
