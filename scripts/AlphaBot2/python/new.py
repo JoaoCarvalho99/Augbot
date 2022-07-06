@@ -10,6 +10,18 @@ import time
 from Augbot.msg import synchPoint
 
 
+def Wheel(pos):
+		"""Generate rainbow colors across 0-255 positions."""
+		pos = int( pos )
+		if pos < 85:
+			return Color(pos * 3, 255 - pos * 3, 0)
+		elif pos < 170:
+			pos -= 85
+			return Color(255 - pos * 3, 0, pos * 3)
+		else:
+			pos -= 170
+			return Color( 0,pos * 3, 255 - pos * 3)
+
 def move():
 
 	Button = 7
@@ -38,22 +50,10 @@ def move():
 	GPIO.setup(DL,GPIO.IN,GPIO.PUD_UP)
 	#end of reference points
 
-	maximum = 50
+	maximum = 50;
 	j = 0
-	integral = 0
+	integral = 0;
 	last_proportional = 0
-
-	def Wheel(pos):
-		"""Generate rainbow colors across 0-255 positions."""
-		pos = int( pos )
-		if pos < 85:
-			return Color(pos * 3, 255 - pos * 3, 0)
-		elif pos < 170:
-			pos -= 85
-			return Color(255 - pos * 3, 0, pos * 3)
-		else:
-			pos -= 170
-			return Color( 0,pos * 3, 255 - pos * 3)
 
 	# Create NeoPixel object with appropriate configuration.
 	strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
@@ -106,7 +106,7 @@ def move():
 		#reference point
 		DR_status = GPIO.input(DR)
 		DL_status = GPIO.input(DL)
-		if DL_status == 0 or DR_status == 0:
+		if (DL_status == 0) or (DR_status == 0):
 			pub.publish ( synchPoint( round(time.time() * 1000) ) )
 
 		#movement
