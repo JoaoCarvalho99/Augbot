@@ -28,7 +28,8 @@ def detect():
 		while True:
 			DR_status = GPIO.input(DR)
 			DL_status = GPIO.input(DL)
-			if(DL_status == 0) or (DR_status == 0):
+#			if(DL_status == 0) or (DR_status == 0):
+			if ( DL_status == 0 ):
 				pub.publish ( synchPoint( round(time.time() * 1000) ) )
 				beep_on()
 				time.sleep(0.01)

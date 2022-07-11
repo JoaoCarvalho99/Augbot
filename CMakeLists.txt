@@ -61,6 +61,7 @@ add_message_files(
   position.msg
   anchorConfig.msg
   synchPoint.msg
+  orientation.msg
   #Message1.msg
   #Message2.msg
   )
@@ -244,3 +245,7 @@ target_link_libraries(deadReckoning ${catkin_LIBRARIES})
 
 add_executable(imu src/imu.cpp)
 target_link_libraries(imu ${catkin_LIBRARIES})
+
+add_executable(ori src/orientation.cpp)
+target_link_libraries(ori ${catkin_LIBRARIES})
+
