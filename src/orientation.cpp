@@ -21,7 +21,7 @@ void load_yaml(ros::NodeHandle n, std::string &stdIn, std::string &sensor){
         n.getParam( "sensor", sensor);
     }
 }
-/*
+
 double AccToMillig (double value ) {
     float constant  = 1000.0/16384.0;
     return value * constant;
@@ -32,7 +32,7 @@ double milligToMSsquare (double value ) {
     ROS_INFO ( "value: %f", value);
     return value * constant;
 }
-
+/*
 double headingToYaw (double heading){
     heading += 180;
     if ( heading > 360 )
@@ -83,23 +83,30 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
     if ( sensor == "microbit" ){
         //q = ToQuaternion ( headingToYaw(data["heading"]), 0, 0 );
         //imuMsg.linear_acceleration.x = milligToMSsquare( data["accel_y"] );
-    	msg.heading = data["heading"];
+    	msg.yaw = data["heading"];
+        msg.accel_x = milligToMSsquare ( data["accel_x"] );
+        msg.accel_y = milligToMSsquare ( data["accel_y"] );
+        msg.accel_z = milligToMSsquare ( data["accel_z"] );
     }
     if ( sensor == "pipico" ) {
         //q = ToQuaternion ( data["yaw"], data["pitch"], data["roll"] );
         //imuMsg.linear_acceleration.x = milligToMSsquare( AccToMillig ( data["accel_y"] ) );
     	msg.yaw = data["yaw"];
-	msg.pitch = data["pitch"];
-	msg.roll = data["roll"];
+	    msg.pitch = data["pitch"];
+	    msg.roll = data["roll"];
+        msg.accel_x = milligToMSsquare ( AccToMillig ( data["accel_x"] ) );
+        msg.accel_y = milligToMSsquare ( AccToMillig ( data["accel_y"] ) );
+        msg.accel_z = milligToMSsquare ( AccToMillig ( data["accel_z"] ) );
     }
 
     //imuMsg.orientation = q;
+
     //imuMsg.linear_acceleration.y = 0;//milligToMSsquare( data["accel_x"] ); //TROCAR X POR Y (ATENCAO)
     
     //imuMsg.linear_acceleration.z = 0;//milligToMSsquare( data["accel_z"] );
     //float timestamp = int(data["timestamp"])/1000 + (int(data["timestamp"])%1000)/1000.0 ;
 
-   // msg.header.stamp = ros::Time ( timestamp );
+    msg.timestamp = std::time(nullptr);
     chatter_pub.publish( msg );
     std::cout << msg << std::endl;
 }

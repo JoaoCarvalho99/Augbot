@@ -1,4 +1,8 @@
+float64 timestamp
 float64 roll
 float64 pitch
 float64 yaw
-int8 heading
+float64 accel_x
+float64 accel_y
+float64 accel_z
+
