@@ -12,7 +12,7 @@ struct Quaternion
 {
     double w, x, y, z;
 };
-
+*/
 void load_yaml(ros::NodeHandle n, std::string &stdIn, std::string &sensor){
     if ( n.hasParam("port")) {
         n.getParam( "port", stdIn);
@@ -21,7 +21,7 @@ void load_yaml(ros::NodeHandle n, std::string &stdIn, std::string &sensor){
         n.getParam( "sensor", sensor);
     }
 }
-
+/*
 double AccToMillig (double value ) {
     float constant  = 1000.0/16384.0;
     return value * constant;
@@ -79,13 +79,13 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
     }
 
 	
-    geometry_msgs::Quaternion q;
-    if ( sensor == "micro:bit" ){
+    //geometry_msgs::Quaternion q;
+    if ( sensor == "microbit" ){
         //q = ToQuaternion ( headingToYaw(data["heading"]), 0, 0 );
         //imuMsg.linear_acceleration.x = milligToMSsquare( data["accel_y"] );
     	msg.heading = data["heading"];
     }
-    if ( sensor == "pi:pico" ) {
+    if ( sensor == "pipico" ) {
         //q = ToQuaternion ( data["yaw"], data["pitch"], data["roll"] );
         //imuMsg.linear_acceleration.x = milligToMSsquare( AccToMillig ( data["accel_y"] ) );
     	msg.yaw = data["yaw"];
@@ -101,18 +101,20 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
 
    // msg.header.stamp = ros::Time ( timestamp );
     chatter_pub.publish( msg );
+    std::cout << msg << std::endl;
 }
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "Imu_publisher");
     ros::NodeHandle n("~");
 
-    std::string stdIn = "/dev/ttyACM0";//2
-    std::string sensor = "micro:bit";//"pi:pico";
+    std::string stdIn = "/dev/ttyACM2";//0";//2
+    std::string sensor = "pipico";//"microbit";//"pipico";
 
-    ros::Publisher chatter_pub = n.advertise<sensor_msgs::Imu>("/"+sensor, 1);
 
-    //load_yaml(n, stdIn, sensor);
+    load_yaml(n, stdIn, sensor);
+
+    ros::Publisher chatter_pub = n.advertise<Augbot::orientation>("/"+sensor, 1);
 
 
     serial::Serial ser;
