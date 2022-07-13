@@ -12,7 +12,7 @@
     </node>
 
     <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->
-   <node name="deadReckoning" pkg="Augbot" type="deadReckoning" output="screen"></node>
+   <node name="deadReckoningMicrobit" pkg="Augbot" type="deadReckoningMicrobit" output="screen"></node>
 
 
     <!--  subscribes 'localization' chatter and publishes tagFull in mqtt  -->

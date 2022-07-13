@@ -39,7 +39,7 @@ def publish ( estimation ):
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "[%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z)
-    global ranges
+    global ranges, initial_guess
 
     ranges = [ data.anchors [ i ] for i in range ( data.nAnchors ) ] 
 

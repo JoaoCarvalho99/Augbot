@@ -1,13 +1,19 @@
 topics2rosbag:
   topics:
     [
-      [ "anchorConfig", anchorConfig ],
-      [ "least_squares", position ],
-      [ "localization", tagFull ],
-      [ "deadReckoning", position ]  
-#,
-     # [ "imu", Imu"]
-
+#      [ "anchorConfig", anchorConfig ],
+[ "least_squares", position ],
+[ "localization", tagFull ],
+[ "deadReckoning", position ]
+,
+[ "imu", Imu],
+[ "synchPoints", synchPoint],
+#
+#
+[ "microbit", orientation],
+#[ "pipico", orientation]
+#
+#
      # [ "/mqtt_least_squares", position ],
      # [ "/mqtt_tagFull", tagFull ],
      # [ "/mqtt_deadReckoning", position ]
