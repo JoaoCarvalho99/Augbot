@@ -44,6 +44,7 @@ def callback(data):
     ranges = [ data.anchors [ i ] for i in range ( data.nAnchors ) ] 
 
     results = least_squares(equations, initial_guess)
+    initial_guess = [ results.x[0], results.x[1], results.x[2] ]
     #print( results )
     rospy.loginfo("LEAST_SQUARE [%f,%f,%f]", results.x[0], results.x[1], results.x[2] )
     rospy.loginfo("DECAWAVE [%f,%f,%f]", data.estimate.position.x, data.estimate.position.y, data.estimate.position.z )

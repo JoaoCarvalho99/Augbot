@@ -4,6 +4,8 @@
 #include "cstdint"
 #include <nlohmann/json.hpp>
 
+#include <Augbot/orientation.h>
+
 #include "serial/serial.h"
 
 struct Quaternion
@@ -58,7 +60,7 @@ geometry_msgs::Quaternion ToQuaternion(double yaw, double pitch, double roll) //
     return q;
 }
 
-void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
+void parser( std::string input, ros::Publisher chatter_pub, std::string sensor, ros::Publisher chatter_pub1 )
 {
     sensor_msgs::Imu imuMsg = sensor_msgs::Imu();
 
@@ -76,6 +78,15 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
     if ( sensor == "micro:bit" ){
         q = ToQuaternion ( headingToYaw(data["heading"]), 0, 0 );
         imuMsg.linear_acceleration.x = milligToMSsquare( data["accel_y"] );
+
+        //orientation
+        Augbot::orientation msg = Augbot::orientation();
+        msg.yaw = data["heading"];
+        msg.accel_x = milligToMSsquare ( data["accel_x"] );
+        msg.accel_y = milligToMSsquare ( data["accel_y"] );
+        msg.accel_z = milligToMSsquare ( data["accel_z"] );
+        msg.timestamp = std::time(nullptr);
+        chatter_pub1.publish( msg );
     }
     if ( sensor == "pi:pico" ) {
         q = ToQuaternion ( data["yaw"], data["pitch"], data["roll"] );
@@ -98,6 +109,7 @@ int main(int argc, char **argv) {
     ros::NodeHandle n("~");
 
     ros::Publisher chatter_pub = n.advertise<sensor_msgs::Imu>("/imu", 1);
+    ros::Publisher chatter_pub1 = n.advertise<Augbot::orientation>("/microbit", 1);
 
     std::string stdIn = "/dev/ttyACM0";
     std::string sensor = "micro:bit";//"pi:pico";
@@ -143,7 +155,7 @@ int main(int argc, char **argv) {
 
             ROS_INFO("%s", input.c_str());
 
-            parser ( input, chatter_pub, sensor );
+            parser ( input, chatter_pub, sensor, chatter_pub1 );
 
             input = "";
 
