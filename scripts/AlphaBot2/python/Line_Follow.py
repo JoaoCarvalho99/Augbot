@@ -22,7 +22,7 @@ LED_INVERT     = False   # True to invert the signal (when using NPN transistor 
 
 
 
-maximum = 30;
+maximum = 35;
 j = 0
 integral = 0;
 last_proportional = 0

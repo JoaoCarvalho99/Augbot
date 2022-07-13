@@ -29,7 +29,7 @@ double AccToMillig (double value ) {
 
 double milligToMSsquare (double value ) {
     float constant  = 0.00980665;
-    ROS_INFO ( "value: %f", value);
+//    ROS_INFO ( "value: %f", value);
     return value * constant;
 }
 /*
@@ -67,7 +67,7 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
     //sensor_msgs::Imu imuMsg = sensor_msgs::Imu();
 
     Augbot::orientation msg = Augbot::orientation();
-    ROS_INFO ( "%s", input.c_str() );
+    ROS_INFO ( "%s: %s", sensor.c_str(), input.c_str() );
     nlohmann::json data;
 
     if ( nlohmann::json::accept ( input ) ){
@@ -108,6 +108,7 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor )
 
     msg.timestamp = std::time(nullptr);
     chatter_pub.publish( msg );
+    ROS_INFO ("%s", sensor.c_str());
     std::cout << msg << std::endl;
 }
 
@@ -160,7 +161,7 @@ int main(int argc, char **argv) {
             while ( ser.available() )
                 input.append( ser.readline() );
 
-            ROS_INFO("%s", input.c_str());
+  //          ROS_INFO("%s", input.c_str());
 
             parser ( input, chatter_pub, sensor );
 
