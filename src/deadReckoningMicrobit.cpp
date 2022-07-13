@@ -169,9 +169,9 @@ void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &acc) {
     Eigen::Vector3d acc_l(acc.y - gravity[1], 0, 0);
     Eigen::Vector3d acc_g = pose.orien * acc_l;
     velocity = velocity + deltaT * (acc_g);
-    pose1.pos = pose.pos + deltaT * velocity;
+    pose1.pos = pose1.pos + deltaT * velocity;
 
-    ROS_INFO ("velocity [%f,%f,%f]", velocity[0], velocity[1], velocity[2]);
+    ROS_INFO ("velocity1 [%f,%f,%f]", velocity[0], velocity[1], velocity[2]);
 }
 
 int main(int argc, char **argv) {

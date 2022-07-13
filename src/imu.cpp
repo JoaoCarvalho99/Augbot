@@ -77,7 +77,7 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor, 
     geometry_msgs::Quaternion q;
     if ( sensor == "micro:bit" ){
         q = ToQuaternion ( headingToYaw(data["heading"]), 0, 0 );
-        imuMsg.linear_acceleration.x = milligToMSsquare( data["accel_y"] );
+        imuMsg.linear_acceleration.x = milligToMSsquare( data["accel_x"] );
 
         //orientation
         Augbot::orientation msg = Augbot::orientation();
@@ -94,9 +94,9 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor, 
     }
 
     imuMsg.orientation = q;
-    imuMsg.linear_acceleration.y = 0;//milligToMSsquare( data["accel_x"] ); //TROCAR X POR Y (ATENCAO)
+    imuMsg.linear_acceleration.y = milligToMSsquare( data["accel_y"] ); //TROCAR X POR Y (ATENCAO)
     
-    imuMsg.linear_acceleration.z = 0;//milligToMSsquare( data["accel_z"] );
+    imuMsg.linear_acceleration.z = milligToMSsquare( data["accel_z"] );
     float timestamp = int(data["timestamp"])/1000 + (int(data["timestamp"])%1000)/1000.0 ;
 
     imuMsg.header.stamp = ros::Time ( timestamp );
