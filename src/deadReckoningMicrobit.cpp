@@ -25,6 +25,7 @@ class ImuIntegrator
 {
 private:
     Pose pose;
+    Pose pose1;
     ros::Time time;
     Eigen::Vector3d gravity;
     Eigen::Vector3d velocity;
@@ -33,9 +34,11 @@ private:
     double prev = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     Augbot::position pubMsg = Augbot::position();
+    Augbot::position pubMsg1 = Augbot::position();
 
     ros::NodeHandle n;
     ros::Publisher line_pub = n.advertise<Augbot::position>("deadReckoning", 1);
+    ros::Publisher line_pub1 = n.advertise<Augbot::position>("deadReckoning1", 1);
 
     double deltaT;
     bool firstT;
@@ -51,8 +54,9 @@ public:
     //! Callback function for subscriber.
     void ImuCallback(const sensor_msgs::Imu::ConstPtr& msg); //reads message from imu
 
+    void setGravity(const geometry_msgs::Vector3 &msg);
     void updatePath(const Eigen::Vector3d &msg);
-    void calcPosition( );
+    void calcPosition( const geometry_msgs::Vector3 &acc );
     void calcOrientation(const geometry_msgs::Vector3 &msg);
 };
 
@@ -99,13 +103,14 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
       time = msg->header.stamp;
       deltaT = 0;
       pose.pos = Eigen::Vector3d(0, 0, 0);
+      setGravity( msg->linear_acceleration );
       firstT = false;
     } else {
       deltaT = (msg->header.stamp - time).toSec();
       std::cout << time << std::endl;
       time = msg->header.stamp;
       pose.orien = setOrientation( msg->orientation );
-      calcPosition( );
+      calcPosition( msg->linear_acceleration );
       std::cout << time << std::endl;
       updatePath(pose.pos);
 
@@ -118,11 +123,25 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
         pubMsg.y = pose.pos[1];
         pubMsg.z = pose.pos[2];
 
-        ROS_INFO ( "[%f,%f,%f]", pubMsg.x, pubMsg.y, pubMsg.z);
+        ROS_INFO ( "deadReckoning: [%f,%f,%f]", pubMsg.x, pubMsg.y, pubMsg.z);
         
+        pubMsg1.x = pose1.pos[0];
+        pubMsg1.y = pose1.pos[1];
+        pubMsg1.z = pose1.pos[2];
+
+        ROS_INFO ( "deadReckoning1: [%f,%f,%f]", pubMsg1.x, pubMsg1.y, pubMsg1.z);
+
         publishMessage();
       }
     }
+}
+
+void ImuIntegrator::setGravity( const geometry_msgs::Vector3 &msg)
+{
+  gravity[0] =  msg.x;
+  gravity[1] =  msg.y;
+  gravity[2] =  msg.z;
+
 }
 
 void ImuIntegrator::updatePath(const Eigen::Vector3d &msg) {
@@ -136,13 +155,21 @@ void ImuIntegrator::updatePath(const Eigen::Vector3d &msg) {
 void ImuIntegrator::publishMessage ()
 {
   line_pub.publish(pubMsg); 
+  line_pub1.publish(pubMsg1); 
 }
 
 
-void ImuIntegrator::calcPosition() {
+void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &acc) {
     Eigen::Vector3d speed( 0.15, 0, 0 );
-    Eigen::Vector3d velocity = pose.orien * speed;
-    pose.pos = pose.pos + deltaT * velocity;
+    Eigen::Vector3d velocity1 = pose.orien * speed;
+    pose.pos = pose.pos + deltaT * velocity1;
+
+    ROS_INFO ("velocity [%f,%f,%f]", velocity1[0], velocity1[1], velocity1[2]);
+
+    Eigen::Vector3d acc_l(acc.y - gravity[1], 0, 0);
+    Eigen::Vector3d acc_g = pose.orien * acc_l;
+    velocity = velocity + deltaT * (acc_g);
+    pose1.pos = pose.pos + deltaT * velocity;
 
     ROS_INFO ("velocity [%f,%f,%f]", velocity[0], velocity[1], velocity[2]);
 }
