@@ -3,12 +3,16 @@ import rospy
 import rosbag
 from datetime import datetime
 import os
+import time
+from threading import Lock
 
 
 from Augbot.msg import *
 from sensor_msgs.msg import *
 
 topics = []
+lock = Lock()
+lock1 = Lock()
 
 #reads tuplet ( topic.name, topic.msg_type ) for every topic
 def load_yaml ():
@@ -30,10 +34,16 @@ def load_yaml ():
 
 #writes every msg to rosbag
 def callback( data, topic ):
-    rospy.loginfo ( topic[0] )
-    bag.write ( topic[0], data )
-    if topic[0] == "imu" or topic[0] == ["microbit"]:
+    global lock, lock1
+    #rospy.loginfo ( topic[0] )
+    if topic[0] == "imu" or topic[0] == "microbit" or topic[0] == "synchPoints" or topic[0] == "localization":
+        lock1.acquire()
         bag1.write ( topic[0], data )
+        lock1.release()
+    else: 
+        lock.acquire()
+        bag.write ( topic[0], data )
+        lock.release()
 
 
 if __name__ == '__main__':
@@ -56,5 +66,8 @@ if __name__ == '__main__':
     rospy.spin()
 
     bag.close()
+    bag1.close()
 
     print ( "wrote to bag: " + name )
+
+    time.sleep(1)

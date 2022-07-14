@@ -8,11 +8,13 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import math
 
 from datetime import datetime
 
 files = [ 'localization', 'deadReckoning', 'least_squares']
-
+files = [ 'localization', 'deadReckoning', 'least_squares', 'deadReckoning1']
+#files = [ 'localization', 'least_squares' ]
 averages = []
 
 
@@ -22,31 +24,35 @@ def error ():
     aux = 1
     global fig
 
-    while aux < 3:
+    while aux < len (files):
         path = home_dir + "/" + files[aux] + "/error.csv"
         f = open(path, 'w')
         writer = csv.writer(f)
         error_x = []
         error_y = []
+        error_distance = []
         while ( i < len ( averages[0] ) ) or ( j < len ( averages[aux] ) ):
             if averages[0][i][0] > averages[aux][j][0]:
                 j += 1
             elif averages[0][i][0] < averages[aux][j][0]:
                 i += 1
             else:
-                row = [averages[0][i][0], averages[0][i][1] - averages[aux][j][1], averages[0][i][2] - averages[aux][j][2]]
+                #row = [averages[0][i][0], averages[0][i][1] - averages[aux][j][1], averages[0][i][2] - averages[aux][j][2]]
+                row = [averages[0][i][0], math.sqrt ( (averages[0][i][1] - averages[aux][j][1])**2 +  (averages[0][i][2] - averages[aux][j][2])**2 )]
                 writer.writerow ( row )
-                error_x.append( row[1] )
-                error_y.append( row[2] )
+        #        error_x.append( row[1] )
+        #        error_y.append( row[2] )
+                error_distance.append ( row[1] )
                 i += 1
                 j += 1
 
         plt.figure( fig )
-        plt.plot ( range ( len ( error_x ) ), error_x )
-        plt.plot ( range ( len ( error_y ) ), error_y )
+        #plt.plot ( range ( len ( error_x ) ), error_x )
+        #plt.plot ( range ( len ( error_y ) ), error_y )
+        plt.plot ( range ( len ( error_distance ) ), error_distance )
         plt.xlabel ("segundo decorrido (s)")
-        plt.ylabel ("error (m")
-        plt.legend ( [ "erro em x", "erro em y" ] )
+        plt.ylabel ("error (m)")
+        #plt.legend ( [ "erro em x", "erro em y" ] )
         plt.savefig ( home_dir + "/" + files[aux] + "/error.png" )
 
         fig += 1
