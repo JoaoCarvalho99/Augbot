@@ -17,6 +17,7 @@ def beep_off():
 
 def detect():
 	Ab = AlphaBot2()
+	prev_time = round(time.time() * 1000)
 
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setwarnings(False)
@@ -30,13 +31,15 @@ def detect():
 			DL_status = GPIO.input(DL)
 #			if(DL_status == 0) or (DR_status == 0):
 			if ( DL_status == 0 ):
-				pub.publish ( synchPoint( round(time.time() * 1000) ) )
+				time = round(time.time() * 1000)
+				pub.publish ( synchPoint( time, time - prev_time ) )
 				beep_on()
 				time.sleep(0.01)
 				beep_off()
 				time.sleep(5)
+				prev_time = time
 			else:
-				 time.sleep(0.01)
+				time.sleep(0.01)
 	except KeyboardInterrupt:
 		GPIO.cleanup()
 
