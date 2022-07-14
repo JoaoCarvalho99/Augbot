@@ -28,7 +28,7 @@ double AccToMillig (double value ) {
 }
 
 double milligToMSsquare (double value ) {
-    float constant  = 0.00980665;
+    double constant  = 0.00980665;
     ROS_INFO ( "value: %f", value);
     return value * constant;
 }

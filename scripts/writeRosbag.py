@@ -32,6 +32,8 @@ def load_yaml ():
 def callback( data, topic ):
     rospy.loginfo ( topic[0] )
     bag.write ( topic[0], data )
+    if topic[0] == "imu" or topic[0] == ["microbit"]:
+        bag1.write ( topic[0], data )
 
 
 if __name__ == '__main__':
@@ -45,6 +47,8 @@ if __name__ == '__main__':
     name = name.replace(':', '-')
     print ( name )
     bag = rosbag.Bag( name, 'w' )
+    name = name.replace('.bag', '_sensors.bag')
+    bag1 = rosbag.Bag( name, 'w' )
 
     for topic in topics:
         rospy.Subscriber( topic[0], eval( topic[1] ), callback, topic )

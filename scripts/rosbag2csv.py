@@ -122,7 +122,7 @@ def main( options ):
         print("Error:Please select a bag file")
         sys.exit()
     topics = GetTopicList(file)
-
+    print (topics)
     options.topic_names=[]
     for k in topics:
         options.topic_names.append(k)
@@ -157,5 +157,3 @@ if __name__ == '__main__':
 
 
     main( options)
-    
-    
