@@ -12,7 +12,7 @@ import math
 
 from datetime import datetime
 
-files = [ 'localization', 'deadReckoning', 'least_squares']
+#files = [ 'localization', 'deadReckoning', 'least_squares']
 files = [ 'localization', 'deadReckoning', 'least_squares', 'deadReckoning1']
 #files = [ 'localization', 'least_squares' ]
 averages = []
@@ -31,7 +31,7 @@ def error ():
         error_x = []
         error_y = []
         error_distance = []
-        while ( i < len ( averages[0] ) ) or ( j < len ( averages[aux] ) ):
+        while ( i < len ( averages[0] ) ) and ( j < len ( averages[aux] ) ):
             if averages[0][i][0] > averages[aux][j][0]:
                 j += 1
             elif averages[0][i][0] < averages[aux][j][0]:

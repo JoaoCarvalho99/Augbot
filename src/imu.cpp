@@ -13,12 +13,15 @@ struct Quaternion
     double w, x, y, z;
 };
 
-void load_yaml(ros::NodeHandle n, std::string &stdIn, std::string &sensor){
+void load_yaml(ros::NodeHandle n, std::string &stdIn, std::string &sensor, int &offset){
     if ( n.hasParam("port")) {
         n.getParam( "port", stdIn);
     }
     if ( n.hasParam("sensor")) {
         n.getParam( "sensor", sensor);
+    }
+    if ( n.hasParam("offset")) {
+        n.getParam( "offset", offset);
     }
 }
 
@@ -33,10 +36,10 @@ double milligToMSsquare (double value ) {
     return value * constant;
 }
 
-double headingToYaw (double heading){
-    //heading += 180;
-    //if ( heading > 360 )
-    //    heading -= 360;
+double headingToYaw (double heading, int offset){
+    heading += offset;
+    if ( heading > 360 )
+        heading -= 360;
     float constant = M_PI / 180;
     return heading * constant;
 }
@@ -60,7 +63,7 @@ geometry_msgs::Quaternion ToQuaternion(double yaw, double pitch, double roll) //
     return q;
 }
 
-void parser( std::string input, ros::Publisher chatter_pub, std::string sensor, ros::Publisher chatter_pub1 )
+void parser( std::string input, ros::Publisher chatter_pub, std::string sensor, ros::Publisher chatter_pub1, int offset)
 {
     sensor_msgs::Imu imuMsg = sensor_msgs::Imu();
 
@@ -76,7 +79,7 @@ void parser( std::string input, ros::Publisher chatter_pub, std::string sensor, 
     }
     geometry_msgs::Quaternion q;
     if ( sensor == "micro:bit" ){
-        q = ToQuaternion ( headingToYaw(data["heading"]), 0, 0 );
+        q = ToQuaternion ( headingToYaw(data["heading"], offset), 0, 0 );
         imuMsg.linear_acceleration.x = milligToMSsquare( data["accel_x"] );
 
         //orientation
@@ -113,8 +116,9 @@ int main(int argc, char **argv) {
 
     std::string stdIn = "/dev/ttyACM0";
     std::string sensor = "micro:bit";//"pi:pico";
+    int offset = 30;
 
-    //load_yaml(n, stdIn, sensor);
+    load_yaml(n, stdIn, sensor, offset);
 
 
     serial::Serial ser;
@@ -155,7 +159,7 @@ int main(int argc, char **argv) {
 
             ROS_INFO("%s", input.c_str());
 
-            parser ( input, chatter_pub, sensor, chatter_pub1 );
+            parser ( input, chatter_pub, sensor, chatter_pub1, offset );
 
             input = "";
 

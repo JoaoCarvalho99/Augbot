@@ -4,13 +4,13 @@ topics2rosbag:
 #      [ "anchorConfig", anchorConfig ],
 [ "least_squares", position ],
 [ "localization", tagFull ],
-[ "deadReckoning", position ]
-,
+[ "deadReckoning", position ],
+[ "deadReckoning1", position ],
 [ "imu", Imu],
 [ "synchPoints", synchPoint],
 #
 #
-[ "microbit", orientation],
+[ "microbit", orientation]
 #[ "pipico", orientation]
 #
 #
