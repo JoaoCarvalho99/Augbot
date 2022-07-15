@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
 
     std::string stdIn = "/dev/ttyACM0";
     std::string sensor = "micro:bit";//"pi:pico";
-    int offset = 30;
+    int offset = -30;
 
     load_yaml(n, stdIn, sensor, offset);
 
