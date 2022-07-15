@@ -31,13 +31,13 @@ def detect():
 			DL_status = GPIO.input(DL)
 #			if(DL_status == 0) or (DR_status == 0):
 			if ( DL_status == 0 ):
-				time = round(time.time() * 1000)
-				pub.publish ( synchPoint( time, time - prev_time ) )
+				t = round(time.time() * 1000)
+				pub.publish ( synchPoint( t, t - prev_time ) )
 				beep_on()
 				time.sleep(0.01)
 				beep_off()
 				time.sleep(5)
-				prev_time = time
+				prev_time = t
 			else:
 				time.sleep(0.01)
 	except KeyboardInterrupt:

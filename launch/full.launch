@@ -9,7 +9,7 @@
     <node name="imu" pkg="Augbot" type="imu" output="screen">
         <param name="port" value="/dev/ttyACM0" /> 
         <param name="sensor" value="micro:bit" /> <!-- micro:bit or pi:pico -->
-        <param name='offset' value=-30 />
+        <param name="offset" value="-30" />
     </node>
 
     <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->
@@ -41,11 +41,11 @@
     </node>
 -->
 
-    <node name="oriPiPico" pkg="Augbot" type="ori" output="screen">
+<!--    <node name="oriPiPico" pkg="Augbot" type="ori" output="screen">
         <param name="port" value="/dev/ttyACM2" /> 
-        <param name="sensor" value="pipico" /> <!-- micro:bit or pi:pico -->
+        <param name="sensor" value="pipico" /> 
     </node>
-
+-->
 
 </launch>
 

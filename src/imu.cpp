@@ -20,9 +20,13 @@ void load_yaml(ros::NodeHandle n, std::string &stdIn, std::string &sensor, int &
     if ( n.hasParam("sensor")) {
         n.getParam( "sensor", sensor);
     }
-    if ( n.hasParam("offset")) {
-        n.getParam( "offset", offset);
-    }
+//    if ( n.hasParam("offset")) {
+//        std::string aux;
+//        n.getParam( "offset", aux);
+//	std::cout << "aux:" + aux << std::endl;
+//        offset = atoi ( aux.c_str() );
+//	ROS_INFO ( "%d", offset);
+//    }
 }
 
 double AccToMillig (double value ) {
@@ -38,8 +42,9 @@ double milligToMSsquare (double value ) {
 
 double headingToYaw (double heading, int offset){
     heading += offset;
-    if ( heading > 360 )
+    if ( heading > 180 )
         heading -= 360;
+    ROS_INFO ( "heading %f", heading);
     float constant = M_PI / 180;
     return heading * constant;
 }
@@ -116,7 +121,7 @@ int main(int argc, char **argv) {
 
     std::string stdIn = "/dev/ttyACM0";
     std::string sensor = "micro:bit";//"pi:pico";
-    int offset = -30;
+    int offset = 10;
 
     load_yaml(n, stdIn, sensor, offset);
 
