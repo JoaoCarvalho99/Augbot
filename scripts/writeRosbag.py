@@ -11,12 +11,13 @@ from Augbot.msg import *
 from sensor_msgs.msg import *
 
 topics = []
+type
 lock = Lock()
 lock1 = Lock()
 
 #reads tuplet ( topic.name, topic.msg_type ) for every topic
 def load_yaml ():
-    global topics
+    global topics, type
 
     params = rospy.get_param("~", {})
 
@@ -25,7 +26,9 @@ def load_yaml ():
     if len( params ) == 0:
         return
 
+    type = params.get( "topics2rosbag" ).get( "type" )
     params = params.get( "topics2rosbag" ).get( "topics" )
+
 
     for topic in params:
         topics.append ( topic )
@@ -40,19 +43,19 @@ def callback( data, topic ):
         lock1.acquire()
         bag1.write ( topic[0], data )
         lock1.release()
-    else: 
-        lock.acquire()
-        bag.write ( topic[0], data )
-        lock.release()
+
+    lock.acquire()
+    bag.write ( topic[0], data )
+    lock.release()
 
 
 if __name__ == '__main__':
 
     rospy.init_node('writeRosbag', anonymous=True)
-  
+
     load_yaml()
 
-    name = "/home/augmanity1/catkin_ws/rosbag/simulation/positions/" + str( datetime.now() ) + ".bag"
+    name = "/home/augmanity1/catkin_ws/rosbag/" + type + "/" + str( datetime.now() ) + ".bag"
     name = name.replace(' ', '_')
     name = name.replace(':', '-')
     print ( name )

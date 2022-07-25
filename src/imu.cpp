@@ -8,6 +8,10 @@
 
 #include "serial/serial.h"
 
+/*
+reads orientation and acceleration for $sensor, from $port with $offset and sends info to /imu
+*/
+
 struct Quaternion
 {
     double w, x, y, z;
@@ -20,26 +24,28 @@ void load_yaml(ros::NodeHandle n, std::string &stdIn, std::string &sensor, int &
     if ( n.hasParam("sensor")) {
         n.getParam( "sensor", sensor);
     }
-//    if ( n.hasParam("offset")) {
-//        std::string aux;
-//        n.getParam( "offset", aux);
-//	std::cout << "aux:" + aux << std::endl;
-//        offset = atoi ( aux.c_str() );
-//	ROS_INFO ( "%d", offset);
-//    }
+    if ( n.hasParam("offset")) {
+        n.getParam( "offset", offset);
+        ROS_INFO ( "offset: %d", offset);
+    }
 }
 
+
+//bit shift for pipico - returns in millig
 double AccToMillig (double value ) {
     float constant  = 1000.0/16384.0;
     return value * constant;
 }
 
+
+//converts acceleration from millig to m/s²
 double milligToMSsquare (double value ) {
     double constant  = 0.00980665;
     ROS_INFO ( "value: %f", value);
     return value * constant;
 }
 
+//Degree to randians
 double headingToYaw (double heading, int offset){
     heading += offset;
     if ( heading > 180 )
@@ -49,6 +55,7 @@ double headingToYaw (double heading, int offset){
     return heading * constant;
 }
 
+//roll pitch yaw to quaternion
 geometry_msgs::Quaternion ToQuaternion(double yaw, double pitch, double roll) // yaw (Z), pitch (Y), roll (X)
 {
     // Abbreviations for the various angular functions
@@ -116,14 +123,18 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "Imu_publisher");
     ros::NodeHandle n("~");
 
-    ros::Publisher chatter_pub = n.advertise<sensor_msgs::Imu>("/imu", 1);
-    ros::Publisher chatter_pub1 = n.advertise<Augbot::orientation>("/microbit", 1);
+    ros::Publisher chatter_pub = n.advertise<sensor_msgs::Imu>("/imu", 1000);
+    ros::Publisher chatter_pub1 = n.advertise<Augbot::orientation>("/microbit", 1000);
 
     std::string stdIn = "/dev/ttyACM0";
     std::string sensor = "micro:bit";//"pi:pico";
     int offset = 10;
 
     load_yaml(n, stdIn, sensor, offset);
+
+    std::cout << "param:" << std::endl;
+    std::cout << stdIn << std::endl;
+    std::cout << offset << std::endl;
 
 
     serial::Serial ser;

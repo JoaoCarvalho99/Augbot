@@ -12,8 +12,14 @@ import math
 
 from datetime import datetime
 
+#argv[1] = dir with csv files
+
+
+#files = csv file names to open
 #files = [ 'localization', 'deadReckoning', 'least_squares']
-files = [ 'localization', 'deadReckoning', 'least_squares', 'deadReckoning1']
+#files = ['localization', 'deadReckoning', 'deadReckoning1']
+#files = [ 'localization', 'deadReckoning', 'least_squares', 'deadReckoning1']
+files = [ 'localization', 'deadReckoning', 'least_squares', 'deadReckoning1', 'deadReckoning2']
 #files = [ 'localization', 'least_squares' ]
 averages = []
 

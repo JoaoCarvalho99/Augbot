@@ -246,6 +246,9 @@ target_link_libraries(deadReckoning ${catkin_LIBRARIES})
 add_executable(deadReckoningMicrobit src/deadReckoningMicrobit.cpp)
 target_link_libraries(deadReckoningMicrobit ${catkin_LIBRARIES})
 
+add_executable(deadReckoningTest src/deadReckoningTest.cpp)
+target_link_libraries(deadReckoningTest ${catkin_LIBRARIES})
+
 add_executable(imu src/imu.cpp)
 target_link_libraries(imu ${catkin_LIBRARIES})
 

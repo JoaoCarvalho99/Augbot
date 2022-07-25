@@ -13,7 +13,14 @@
 #include <ctime>
 
 #include "Augbot/position.h"
+#include "Augbot/synchPoint.h"
 #include <sensor_msgs/Imu.h>
+
+/*
+deadReckoning used to estimate position of alphabot2
+Listens to /imu chat imu.cpp - received by microbit (orientation - quaternion,
+ linear acceleration(x,y,z) m/s² -> since microbit gives wrong acceleration, constant speed was used ( 0.15m/s) )
+*/
 
 struct Pose
 {
@@ -30,6 +37,8 @@ private:
     Eigen::Vector3d gravity;
     Eigen::Vector3d velocity;
     visualization_msgs::Marker path;
+
+    int synchPoint = 0;
 
     double prev = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
@@ -58,15 +67,21 @@ public:
     void updatePath(const Eigen::Vector3d &msg);
     void calcPosition( const geometry_msgs::Vector3 &acc );
     void calcOrientation(const geometry_msgs::Vector3 &msg);
+    
+    void synchPointCallback ( const Augbot::synchPoint ); 
 };
 
 ImuIntegrator::ImuIntegrator() {
   Eigen::Vector3d zero(0, 0, 0);
   pose.pos = zero;
+  pose1.pos = zero;
   pose.orien = Eigen::Matrix3d::Identity();
+  pose1.orien = Eigen::Matrix3d::Identity();
   velocity = zero;
   firstT = true;
 
+
+  synchPoint = 0;
   path.color.b = 1.0;
   path.color.a = 1.0;
   path.type = visualization_msgs::Marker::LINE_STRIP;
@@ -83,7 +98,7 @@ ImuIntegrator::ImuIntegrator() {
 }
 
 
-//my function to calculate orientation from quaternion
+//function to calculate orientation from quaternion
 Eigen::Matrix3d setOrientation (const geometry_msgs::Quaternion& msg){
   float q0 = msg.x;
   float q1 = msg.y;
@@ -103,6 +118,7 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
       time = msg->header.stamp;
       deltaT = 0;
       pose.pos = Eigen::Vector3d(0, 0, 0);
+      pose1.pos = Eigen::Vector3d(0, 0, 0);
       setGravity( msg->linear_acceleration );
       firstT = false;
     } else {
@@ -136,6 +152,13 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
     }
 }
 
+void ImuIntegrator::synchPointCallback ( const Augbot::synchPoint ) {
+  synchPoint ++;
+  if ( synchPoint % 5 == 0 )
+    pose.pos = Eigen::Vector3d ( 0, 1.25, 0 ); 
+}
+
+//not used
 void ImuIntegrator::setGravity( const geometry_msgs::Vector3 &msg)
 {
   gravity[0] =  msg.x;
@@ -152,6 +175,8 @@ void ImuIntegrator::updatePath(const Eigen::Vector3d &msg) {
   path.points.push_back(p);
 }
 
+
+//publishes position estimated each 100ms to /deadReckoning (constant speed) and /deadReckoning (acceleration by microbit - wrong)
 void ImuIntegrator::publishMessage ()
 {
   line_pub.publish(pubMsg); 
@@ -159,19 +184,31 @@ void ImuIntegrator::publishMessage ()
 }
 
 
+
 void ImuIntegrator::calcPosition(const geometry_msgs::Vector3 &acc) {
     Eigen::Vector3d speed( 0.15, 0, 0 );
     Eigen::Vector3d velocity1 = pose.orien * speed;
     pose.pos = pose.pos + deltaT * velocity1;
-
+    //position estimated with constant speed (m/s)
     ROS_INFO ("velocity [%f,%f,%f]", velocity1[0], velocity1[1], velocity1[2]);
 
-    Eigen::Vector3d acc_l(acc.x - gravity[0], acc.y - gravity[1], acc.z - gravity[2]);
+    Eigen::Vector3d acc_l(acc.x, acc.y, acc.z);
     Eigen::Vector3d acc_g = pose.orien * acc_l;
-    velocity = velocity + deltaT * (acc_g);
+    gravity = Eigen::Vector3d ( 0, 0, acc_g[2] );
+    velocity = velocity + deltaT * (acc_g - gravity);
     pose1.pos = pose1.pos + deltaT * velocity;
-
+    //position estimated by microbit's accelerations (m/s²)
     ROS_INFO ("velocity1 [%f,%f,%f]", velocity[0], velocity[1], velocity[2]);
+
+/*    Eigen::Vector3d acc_l(acc.x, acc.y, acc.z);
+    //Eigen::Vector3d acc_g = pose.orien * acc_l;
+    //gravity = Eigen::Vector3d ( 0, 0, acc_l[2] );
+    velocity = velocity + deltaT * acc_l;
+    Eigen::Vector3d velocity_l =  pose.orien * velocity;
+    velocity_l[2] = 0;
+    pose1.pos = pose1.pos + deltaT * velocity_l;
+    //position estimated by microbit's accelerations (m/s²)
+    ROS_INFO ("velocity1 [%f,%f,%f]", velocity_l[0], velocity_l[1], velocity_l[2]);*/
 }
 
 int main(int argc, char **argv) {
@@ -179,7 +216,8 @@ int main(int argc, char **argv) {
   ros::NodeHandle nh;
   ImuIntegrator *imu_integrator = new ImuIntegrator();//line);
 
-  ros::Subscriber Imu_message = nh.subscribe("/imu", 1, &ImuIntegrator::ImuCallback, imu_integrator);
+  ros::Subscriber Imu_message = nh.subscribe("/imu", 1000, &ImuIntegrator::ImuCallback, imu_integrator);
+  ros::Subscriber synchPoint_message = nh.subscribe("/synchPoints", 10, &ImuIntegrator::synchPointCallback, imu_integrator);
   // nh.subscribe("/imu", 1000, &ImuIntegrator::ImuCallback, imu_integrator);
   ros::spin();
 }

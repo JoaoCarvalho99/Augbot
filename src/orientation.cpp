@@ -7,6 +7,12 @@
 
 #include "serial/serial.h"
 
+
+/*
+
+
+*/
+
 /*
 struct Quaternion
 {
@@ -122,7 +128,7 @@ int main(int argc, char **argv) {
 
     load_yaml(n, stdIn, sensor);
 
-    ros::Publisher chatter_pub = n.advertise<Augbot::orientation>("/"+sensor, 1);
+    ros::Publisher chatter_pub = n.advertise<Augbot::orientation>("/"+sensor, 1000);
 
 
     serial::Serial ser;

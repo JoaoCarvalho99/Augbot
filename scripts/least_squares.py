@@ -19,6 +19,8 @@ ri = []
 ranges = []
 initial_guess = []
 
+queue = []
+
 
 def equations ( guess ):
     x, y , z = guess
@@ -28,12 +30,26 @@ def equations ( guess ):
         (x - a.position.x)**2 + (y - a.position.y)**2 + (z - a.position.z)**2 - (a.range )**2 for a in ranges
     ]
 
+def movingAverage ( estimation ):
+    global queue
+    average = [ 0.0 ,0.0 ,0.0 ]
+    if ( len ( queue ) < 10 ):
+        queue.append ( estimation )
+    else:
+        queue.pop (0)
+        queue.append ( estimation )
+    for q in queue:
+        average += q
+    average = average / len ( queue )
+    return average
+
 #publish estimation into publish/subscribe chatter "least_squares"
 def publish ( estimation ):
     pos = position()
-    pos.x = estimation[0]
-    pos.y = estimation[1]
-    pos.z = estimation[2]
+    average = movingAverage ( estimation )
+    pos.x = average[0]
+    pos.y = average[1]
+    pos.z = average[2]
     print(pub.name)
     pub.publish( pos )
 

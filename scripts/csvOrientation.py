@@ -11,6 +11,11 @@ import os
 
 from datetime import datetime
 
+#argv[1] = dir with csv files
+
+
+#files = csv file names to open
+
 #files = [ 'pipico', 'microbit']
 files = ['microbit']
 averages = []

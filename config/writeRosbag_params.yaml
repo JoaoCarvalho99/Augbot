@@ -1,4 +1,5 @@
 topics2rosbag:
+  type: "real"
   topics:
     [
 #      [ "anchorConfig", anchorConfig ],
@@ -6,6 +7,8 @@ topics2rosbag:
 [ "localization", tagFull ],
 [ "deadReckoning", position ],
 [ "deadReckoning1", position ],
+[ "deadReckoning2", position ],
+[ "deadReckoning3", position ],
 [ "imu", Imu],
 [ "synchPoints", synchPoint],
 #

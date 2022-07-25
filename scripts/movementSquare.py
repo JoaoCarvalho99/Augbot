@@ -12,6 +12,8 @@ from tf2_msgs.msg import TFMessage
 from std_msgs.msg import String
 from gazebo_msgs.msg import ModelState
 
+#moves alphabot2 in the simulation in squares ( each side = 12m)
+
 global yaw
 global x, y
 

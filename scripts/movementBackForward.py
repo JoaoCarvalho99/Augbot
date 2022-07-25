@@ -11,6 +11,8 @@ from Augbot.msg import position
 prev = 0
 global bag
 
+#moves alphabot backward and forward in simulation
+
 #callback to alphabot2 position (not used)
 def callback(data):
     global prev
