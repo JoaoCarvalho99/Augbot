@@ -68,7 +68,7 @@ public:
     void calcPosition( const geometry_msgs::Vector3 &acc );
     void calcOrientation(const geometry_msgs::Vector3 &msg);
     
-    void synchPointCallback ( const Augbot::synchPoint ); 
+    void synchPointCallback ( const Augbot::synchPoint &msg ); 
 };
 
 ImuIntegrator::ImuIntegrator() {
@@ -152,8 +152,9 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
     }
 }
 
-void ImuIntegrator::synchPointCallback ( const Augbot::synchPoint ) {
-  synchPoint ++;
+void ImuIntegrator::synchPointCallback ( const Augbot::synchPoint &msg) {
+  if ( msg.diff > 9000 )
+    synchPoint ++;
   if ( synchPoint % 5 == 0 )
     pose.pos = Eigen::Vector3d ( 0, 1.25, 0 ); 
 }
