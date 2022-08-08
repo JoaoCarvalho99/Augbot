@@ -13,7 +13,7 @@
  * 
  *                                               Reads data from serial port connection with DWM1001, 
  *                                          transforms data into ROS custom messages (final one is tagFull) 
- *                                                      and publishes into 'localization'
+ *                                                      and publishes into 'UWB'
  * 
  */
 
@@ -131,7 +131,7 @@ int parser( std::string input, Augbot::tagFull* tagFullMsg, int nAnchor )
 /**
  * @brief 
  * 
- * @param input data read from the serial port connection with dwm1001 and publishes tagFull to chatter 'localization"
+ * @param input data read from the serial port connection with dwm1001 and publishes tagFull to chatter 'UWB"
  */
 void parser( std::string input, ros::Publisher chatter_pub )
 {
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 
     ros::NodeHandle n;
 
-    ros::Publisher chatter_pub = n.advertise<Augbot::tagFull>("localization", 1000);
+    ros::Publisher chatter_pub = n.advertise<Augbot::tagFull>("UWB", 1000);
 
     std::string stdIn = "/dev/ttyACM1";
 

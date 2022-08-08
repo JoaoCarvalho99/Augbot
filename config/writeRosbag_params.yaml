@@ -3,8 +3,9 @@ topics2rosbag:
   topics:
     [
 #      [ "anchorConfig", anchorConfig ],
-[ "least_squares", position ],
-[ "localization", tagFull ],
+[ "leastSquares", position ],
+[ "leastSquaresMA", position ],
+[ "UWB", tagFull ],
 [ "deadReckoning", position ],
 [ "deadReckoning1", position ],
 [ "deadReckoning2", position ],
@@ -13,11 +14,12 @@ topics2rosbag:
 [ "synchPoints", synchPoint],
 #
 #
-[ "microbit", orientation]
+[ "microbit", orientation],
+[ "synchPointError", synchPointError]
 #[ "pipico", orientation]
 #
 #
-     # [ "/mqtt_least_squares", position ],
+     # [ "/mqtt_leastSquares", position ],
      # [ "/mqtt_tagFull", tagFull ],
      # [ "/mqtt_deadReckoning", position ]
 

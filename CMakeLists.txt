@@ -62,6 +62,7 @@ add_message_files(
   anchorConfig.msg
   synchPoint.msg
   orientation.msg
+  synchPointError.msg
   #Message1.msg
   #Message2.msg
   )
@@ -231,14 +232,11 @@ include_directories(
 #target_link_libraries(pyReader ${catkin_LIBRARIES})
 #add_dependencies(pyReader beginner_tutorials_generate_messages_cpp)
 
-add_executable(localization_publish src/localization_publish.cpp)
-target_link_libraries(localization_publish ${catkin_LIBRARIES})
+add_executable(UWB_publisher src/UWB_publisher.cpp)
+target_link_libraries(UWB_publisher ${catkin_LIBRARIES})
 
-add_executable(localization_improved_publisher src/localization_improved_publisher.cpp)
-target_link_libraries(localization_improved_publisher ${catkin_LIBRARIES})
-
-add_executable(localization_listener src/localization_listener.cpp)
-target_link_libraries(localization_listener ${catkin_LIBRARIES})
+add_executable(UWB_listener src/UWB_listener.cpp)
+target_link_libraries(UWB_listener ${catkin_LIBRARIES})
 
 add_executable(deadReckoning src/deadReckoning.cpp)
 target_link_libraries(deadReckoning ${catkin_LIBRARIES})
@@ -248,6 +246,9 @@ target_link_libraries(deadReckoningMicrobit ${catkin_LIBRARIES})
 
 add_executable(deadReckoningTest src/deadReckoningTest.cpp)
 target_link_libraries(deadReckoningTest ${catkin_LIBRARIES})
+
+add_executable(localization2UWB src/localization2UWB.cpp)
+target_link_libraries(localization2UWB ${catkin_LIBRARIES})
 
 add_executable(imu src/imu.cpp)
 target_link_libraries(imu ${catkin_LIBRARIES})

@@ -39,7 +39,7 @@ def load_yaml ():
 def callback( data, topic ):
     global lock, lock1
     #rospy.loginfo ( topic[0] )
-    if topic[0] == "imu" or topic[0] == "microbit" or topic[0] == "synchPoints" or topic[0] == "localization":
+    if topic[0] == "imu" or topic[0] == "microbit" or topic[0] == "synchPoints" or topic[0] == "UWB":
         lock1.acquire()
         bag1.write ( topic[0], data )
         lock1.release()

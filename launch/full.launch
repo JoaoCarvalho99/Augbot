@@ -1,7 +1,7 @@
 <launch>
 
     <!--   reads and parses uwb data from serial port and publishes to /location -->
-    <node pkg="Augbot" name="UWBreader" type="localization_improved_publisher" output="screen">
+    <node pkg="Augbot" name="UWBreader" type="UWB_publisher" output="screen">
 	    <param name="port" value="/dev/ttyACM1" /> 
     </node>
 
@@ -13,20 +13,23 @@
     </node>
 
     <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->
-   <node name="deadReckoningMicrobit" pkg="Augbot" type="deadReckoningMicrobit" output="screen"></node>
+   <node name="deadReckoningMicrobit" pkg="Augbot" type="deadReckoningMicrobit" output="screen">
+        <param name="synchX" type="double" value="0" />
+        <param name="synchY" type="double" value="-1.5" />
+   </node>
 
 
-    <!--  subscribes 'localization' chatter and publishes tagFull in mqtt  -->
+    <!--  subscribes 'UWB' chatter and publishes tagFull in mqtt  -->
 <!--    <node name="mqttBridgeTagFull" pkg="Augbot" type="mqttBridge.py" output="screen">
       <param name="subset" value="tagFull" /> 
       <param name="toDo" value="mqttPublish" /> 
       <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
     </node>
 -->
-    <!--   subscribes 'localization' chatter, transform data and publishes 'least_squares' chatter -->
+    <!--   subscribes 'UWB' chatter, transform data and publishes 'leastSquares' chatter -->
     <node pkg="Augbot" name="least_squares" type="least_squares.py" output="screen"/>
 
-      <!--  subscribes 'least_squares' chatter and publishes position in mqtt  -->
+      <!--  subscribes 'leastSquares' chatter and publishes position in mqtt  -->
 <!--    <node name="mqttBridgeLS" pkg="Augbot" type="mqttBridge.py" output="screen">
       <param name="subset" value="leastSquares" /> 
       <param name="toDo" value="mqttPublish" /> 
@@ -46,6 +49,8 @@
         <param name="sensor" value="pipico" /> 
     </node>
 -->
+
+    <node pkg="Augbot" name="synchPointError" type="synchPointError.py" output="screen"/>
 
 </launch>
 

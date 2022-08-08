@@ -6,9 +6,9 @@ from std_msgs.msg import String
 from Augbot.msg import tagFull, position
 
 
-#                                           reads tagFull from chatter 'localization'
-#                                           calculates least_squares with data received
-#                                           sends position calculated to chatter "least_squares"
+#                                           reads tagFull from chatter 'UWB'
+#                                           calculates leastSquares with data received
+#                                           sends position calculated to chatter "leastSquares"
 
 
 
@@ -43,15 +43,18 @@ def movingAverage ( estimation ):
     average = average / len ( queue )
     return average
 
-#publish estimation into publish/subscribe chatter "least_squares"
+#publish estimation into publish/subscribe chatter "leastSquares"
 def publish ( estimation ):
     pos = position()
+    pos.x = estimation[0]
+    pos.y = estimation[1]
+    pos.z = estimation[2]
     average = movingAverage ( estimation )
+    pub.publish ( pos )
     pos.x = average[0]
     pos.y = average[1]
     pos.z = average[2]
-    print(pub.name)
-    pub.publish( pos )
+    pubMA.publish( pos )
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "[%f,%f,%f]", data.estimate.position.x,data.estimate.position.y,data.estimate.position.z)
@@ -70,15 +73,16 @@ def callback(data):
     
 def listener():
 
-    rospy.Subscriber("localization", tagFull, callback)
+    rospy.Subscriber("UWB", tagFull, callback)
 
     rospy.spin()
   
 if __name__ == '__main__':
     initial_guess = [1.0, 1.0, 0.0]
 
-    pub = rospy.Publisher('least_squares', position, queue_size=1)
-    rospy.init_node('least_squares', anonymous=True)
+    pub = rospy.Publisher('leastSquares', position, queue_size=1)
+    pubMA = rospy.Publisher('leastSquaresMA', position, queue_size=1)
+    rospy.init_node('leastSquares', anonymous=True)
    
     listener()
 

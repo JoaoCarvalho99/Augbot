@@ -1,0 +1,36 @@
+<launch>
+
+    <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->
+   <node name="deadReckoningMicrobit" pkg="Augbot" type="deadReckoningMicrobit" output="screen">
+        <param name="synchX" type="double" value="0" />
+        <param name="synchY" type="double" value="-1.5" />
+   </node>
+
+    <!--   subscribes 'UWB' chatter, transform data and publishes 'leastSquares' chatter -->
+    <node pkg="Augbot" name="least_squares" type="least_squares.py" output="screen"/>
+
+    <node pkg="Augbot" name="synchPointError" type="synchPointError.py" output="screen"/>
+
+          <!--  subscribes 'leastSquares' chatter and publishes position in mqtt  -->
+<!-- <node name="mqttBridgeLS" pkg="Augbot" type="mqttBridge.py" output="screen">
+      <param name="subset" value="leastSquares" /> 
+      <param name="toDo" value="mqttPublish" /> 
+      <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
+    </node>-->   
+
+      <!--  subscribes 'deadReckoning' chatter and publishes position in mqtt  -->
+ <!--   <node name="mqttBridgeDR" pkg="Augbot" type="mqttBridge.py" output="screen">
+      <param name="subset" value="deadReckoning" /> 
+      <param name="toDo" value="mqttPublish" /> 
+      <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
+    </node>-->   
+
+    <!--  subscribes 'UWB' chatter and publishes tagFull in mqtt  -->
+ <!--   <node name="mqttBridgeTagFull" pkg="Augbot" type="mqttBridge.py" output="screen">
+      <param name="subset" value="tagFull" /> 
+      <param name="toDo" value="mqttPublish" /> 
+      <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
+    </node>-->   
+
+</launch>
+

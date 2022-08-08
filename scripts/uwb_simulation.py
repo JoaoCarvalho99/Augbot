@@ -9,8 +9,8 @@ from datetime import datetime
 from tf2_msgs.msg import TFMessage
 
 #                                           reads position of simulated alphabot2 'tf'
-#                                           calculates least_squares with data received
-#                                           sends tagFull to chatter "simulation"
+#                                           calculates ranges from the anchors to the robot's position
+#                                           sends tagFull to chatter "UWB"
 
 
 
@@ -80,7 +80,7 @@ def ConfigCallback ( data ):
 
 
 
-#callback to new localization chatter position
+#callback to new UWB chatter position
 def callback(data):
     global prev
     now = datetime.utcnow().timestamp()
@@ -135,7 +135,7 @@ def listener():
 if __name__ == '__main__':
     rospy.init_node('simulation', anonymous=True)
 
-    pub = rospy.Publisher('localization', tagFull, queue_size=1)
+    pub = rospy.Publisher('UWB', tagFull, queue_size=1)
 
     load_yaml()
    

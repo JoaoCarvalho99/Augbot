@@ -6,14 +6,14 @@
 
 /**
  * @brief 
- *                                                     Reads data from 'localization' in the form of tagFull
+ *                                                     Reads data from 'UWB' in the form of tagFull
  */
 
 
 
 
 /**
- * @brief callback for 'localization' chatter
+ * @brief callback for 'UWB' chatter
  * 
  * @param msg tagFull message received
  */
@@ -25,13 +25,13 @@ void chatterCallback(const Augbot::tagFull::ConstPtr& msg)
 int main(int argc, char **argv)
 {
   
-  ros::init(argc, argv, "localization_listener");
+  ros::init(argc, argv, "UWB_listener");
 
   
   ros::NodeHandle n;
 
-  //subscreve o topico localization (chama chatterCallback() smp que recebe nova mensagem)
-  ros::Subscriber sub = n.subscribe("localization", 1000, chatterCallback);
+  //subscreve o topico UWB (chama chatterCallback() smp que recebe nova mensagem)
+  ros::Subscriber sub = n.subscribe("UWB", 1000, chatterCallback);
 
   //entra no loop... chamando message callbacks o mais rapido possivel
   ros::spin();
