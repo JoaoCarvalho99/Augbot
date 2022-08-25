@@ -2,7 +2,6 @@
 from datetime import date
 
 from numpy import double
-import rospy
 import csv
 import sys
 import pandas as pd
@@ -17,26 +16,157 @@ from datetime import datetime
 
 
 #files = csv file names to open
-#files = [ 'UWB', 'deadReckoning', 'leastSquares']
-#files = ['UWB', 'deadReckoning', 'deadReckoning1']
-#files = [ 'UWB', 'deadReckoning', 'leastSquares', 'deadReckoning1']
-#files = [ 'UWB', 'deadReckoning', 'leastSquares', 'deadReckoning1', 'deadReckoning2']
-files = [ 'UWB', 'deadReckoning', 'leastSquares', 'leastSquaresMA', 'deadReckoning1', 'deadReckoning2']
+#files = [ 'UWB', 'deadReckoningSP', 'leastSquares']
+#files = ['UWB', 'deadReckoningSP', 'deadReckoning']
+#files = [ 'UWB', 'deadReckoningSP', 'leastSquares', 'deadReckoning']
+#files = [ 'UWB', 'deadReckoningSP', 'leastSquares', 'deadReckoning', 'deadReckoningACC']
+files = [ 'UWB', 'deadReckoningSP', 'leastSquares', 'leastSquaresMA', 'deadReckoning', 'deadReckoningACC']
 #files = [ 'UWB', 'leastSquares' ]
 legend = []
 averages = []
 
-deadReckoning2 = 0
-deadReckoning1 = 0
-leastSquares = 1
-uwb = 1
+deadReckoningACC = 0
+deadReckoning = 1
+leastSquares = 0
+uwb = 0
 
-#synchPoints = [ [0.6,-1.4], [-0.7, -10.7], [-9.9, -9.3], [-8.6, -0.1]] #simulation
-#synchPointX = [ 0.6, -0.7, -9.9, -8.6]
-#synchPointY = [ -1.4, -10.7, -9.3, -0.1]
-synchPoints = [ [ 0, -1.5], [ 0, -3.5], [ -4, -3.25], [ -4, -1.75]] #real
-synchPointX = [0, 0, -4, -4]
-synchPointY = [-1.5, -3.5, -3.25, -1.75]
+sim = 1
+
+if sim == 1:
+    synchPoints = [ [0.6,-1.4], [-0.7, -10.7], [-9.9, -9.3], [-8.6, -0.1]] #simulation
+    synchPointX = [ 0.6, -0.7, -9.9, -8.6]
+    synchPointY = [ -1.4, -10.7, -9.3, -0.1]
+    Anchors= [    [-1, 2, 2],    [2, -6, 2],    [-2, -12, 2],    [-12, -12, 2],    [-12, -2, 2]]
+    anchorsX = [-1,2,-2,-12,-12]
+    anchorsY = [2,-6,-12,-12,-2]
+else:
+    synchPoints = [ [ 0, -1.5], [ 0, -3.5], [ -4, -3.25], [ -4, -1.75]] #real
+    synchPointX = [0, 0, -4, -4]
+    synchPointY = [-1.5, -3.5, -3.25, -1.75]
+    Anchors= [[0, 0, 2],[-4.80, -5.80, 1.70],[-7.60, -1.60, 2.40],[-1.70, -5.80, 1.80],[-4.60, 0, 1.80]]
+    anchorsX = [0,-4.8,-7.6,-1.7,-4.6]
+    anchorsY = [0,-5.8,-1.6,-5.8,-0]
+
+
+
+def toPlot(nFig, x, y, xlabel,ylabel, savePath, plotLegend, scatterSP, scatterAnchor, xticks):
+    plt.figure( nFig )
+    if type ( y[0] ) == list or type( y[0]) == pd.core.series.Series:
+        for y0 in y:
+            plt.plot ( x, y0)
+    else: 
+        plt.plot (x,y)
+    plt.xlabel ( xlabel )
+    plt.ylabel( ylabel)
+    if xticks != -1:
+        plt.xticks ( xticks )
+    if plotLegend != -1:
+        plt.legend(plotLegend, bbox_to_anchor = (0.5,1.15), loc="upper center", fancybox = True, ncol=3)
+    if scatterSP == 1:
+        plt.scatter( synchPointX, synchPointY, color="black",zorder=98 )
+    if scatterAnchor == 1:
+        plt.scatter( anchorsX, anchorsY, color = "purple", zorder = 99, marker="v",s=100)
+    plt.savefig ( savePath )
+
+def synchPointError():
+    global deadReckoningACC, fig, uwb
+    leastSquares = 0
+    deadReckoning = 1
+
+    file = home_dir + "/" + "synchPointError.csv"
+    df = pd.read_csv( file, sep=',')
+
+    legend = []
+
+    col_realx = df.iloc[:,21]
+    col_realy = df.iloc[:,22]
+    col_realz = df.iloc[:,23]
+
+    error = []
+    
+    if leastSquares ==1:
+        col_LSx = df.iloc[:,3]
+        col_LSy = df.iloc[:,4]
+        col_LSz = df.iloc[:,5]
+        legend.append ("leastSquares")
+        i = 0
+        e = []
+        while i < len( col_realz):
+            e.append( math.sqrt ( (col_realx[i] - col_LSx[i])**2 +  (col_realy[i] - col_LSy[i])**2 ) )
+            i += 1
+        error.append(e)
+
+
+    col_LSMAx = df.iloc[:,6]
+    col_LSMAy = df.iloc[:,7]
+    col_LSMAz = df.iloc[:,8]
+    legend.append( "leastSquaresMA")
+    i = 0
+    e = []
+    while i < len( col_realz):
+        e.append( math.sqrt ( (col_realx[i] - col_LSMAx[i])**2 +  (col_realy[i] - col_LSMAy[i])**2 ) )
+        i += 1
+    error.append(e)
+
+    col_dRx = df.iloc[:,9]
+    col_dRy = df.iloc[:,10]
+    col_dRz = df.iloc[:,11]
+    legend.append( "deadReckoningSP")
+    i = 0
+    e = []
+    while i < len( col_realz):
+        e.append( math.sqrt ( (col_realx[i] - col_dRx[i])**2 +  (col_realy[i] - col_dRy[i])**2 ) )
+        i += 1
+    error.append(e)
+
+    if deadReckoning == 1:
+        col_dR1x = df.iloc[:,12]
+        col_dR1y = df.iloc[:,13]
+        col_dR1z = df.iloc[:,14]
+        legend.append( "deadReckoning")
+        i = 0
+        e = []
+        while i < len( col_realz):
+            e.append( math.sqrt ( (col_realx[i] - col_dR1x[i])**2 +  (col_realy[i] - col_dR1y[i])**2 ) )
+            i += 1
+        error.append(e)
+
+    if deadReckoningACC == 1:
+        col_dR2x = df.iloc[:,15]
+        col_dR2y = df.iloc[:,16]
+        col_dR2z = df.iloc[:,17]
+        legend.append ( "deadReckoningACC" )
+        i = 0
+        e = []
+        while i < len( col_realz):
+            e.append( math.sqrt ( (col_realx[i] - col_dR2x[i])**2 +  (col_realy[i] - col_dR2y[i])**2 ) )
+            i += 1
+        error.append(e)
+
+    if uwb == 1:
+        col_UWBx = df.iloc[:,18]
+        col_UWBy = df.iloc[:,19]
+        col_UWBz = df.iloc[:,20]
+        legend.append ( "Decawave" )
+        i = 0
+        e = []
+        while i < len( col_realz):
+            e.append( math.sqrt ( (col_realx[i] - col_UWBx[i])**2 +  (col_realy[i] - col_UWBy[i])**2 ) )
+            i += 1
+        error.append(e)
+
+    print (error)
+    i = 0
+    aux = []
+    while i < len (error):
+        aux.append(error[i][:21])
+        i += 1
+
+    #toPlot(nFig, x, y, xlabel,ylabel, savePath, plotLegend, scatterSP, scatterAnchor, xticks)
+    toPlot(fig, range(len(error[0][:21])),aux,'Synchronization Point number','error (m)', home_dir + "/synchPointError.pdf",
+     legend, -1, -1, range(len(error[0][:21])))
+    fig += 1
+
 
 
 def error ():
@@ -44,6 +174,8 @@ def error ():
     j = 0
     aux = 1
     global fig
+    legendError = []
+    legendErrorLS = []
 
     while aux < len (files):
         path = home_dir + "/" + files[aux] + "/error.csv"
@@ -67,26 +199,46 @@ def error ():
                 i += 1
                 j += 1
 
-        plt.figure( fig )
-        #plt.plot ( range ( len ( error_x ) ), error_x )
-        #plt.plot ( range ( len ( error_y ) ), error_y )
-        plt.plot ( range ( len ( error_distance ) ), error_distance )
-        plt.xlabel ("time (s)")
-        plt.ylabel ("error (m)")
-        #plt.legend ( [ "erro em x", "erro em y" ] )
-        plt.savefig ( home_dir + "/" + files[aux] + "/error.png" )
-
+        #toPlot(nFig, x, y, xlabel,ylabel, savePath, plotLegend, scatterSP, scatterAnchor, xticks)
+        toPlot(fig, range ( len ( error_distance ) ), error_distance, "time (s)","error (m)", home_dir + "/" + files[aux] + "/error.pdf"
+        , -1, -1, -1, -1)
         fig += 1
         
         f.close()
         i = 0
         j = 0
+
+        if files[aux] == "leastSquaresMA" or files[aux] =="deadReckoning" or files[aux] == "deadReckoningSP":
+            legendError.append ( files[aux])
+            plt.figure(1)
+            plt.plot (range ( len ( error_distance ) ), error_distance)
+
+        if files[aux] == "leastSquaresMA" or files[aux] =="leastSquares":
+            legendErrorLS.append ( files[aux])
+            plt.figure(2)
+            plt.plot (range ( len ( error_distance ) ), error_distance)
+
         aux += 1
+
+
+    
+    plt.figure(1)
+    plt.xlabel("time (s)")
+    plt.ylabel("error(m)")
+    plt.legend ( legendError, bbox_to_anchor = (0.5,1.15), loc="upper center", fancybox = True, ncol=3 )
+    plt.savefig ( home_dir + "/realError.pdf" )
+
+    plt.figure(2)
+    plt.xlabel("time (s)")
+    plt.ylabel("error(m)")
+    plt.legend ( legendError, bbox_to_anchor = (0.5,1.15), loc="upper center", fancybox = True, ncol=3 )
+    plt.savefig ( home_dir + "/realLSError.pdf" )
+
 
 if __name__ == '__main__':
     home_dir = sys.argv[1]
     
-    fig = 1
+    fig = 3
 
     cur = 0
     while cur < len ( files ):
@@ -155,32 +307,22 @@ if __name__ == '__main__':
     
         averages.append( average )
 
-        plt.figure(fig)
-        plt.plot( range( col_x.count() ), col_x )
-    
-        #plt.show()
-    
-        plt.plot( range( col_y.count() ), col_y )
-    
-        #plt.show()
-    
-        plt.plot( range( col_z.count() ), col_z )
-    
-        plt.xlabel("output order number")
-    
-        plt.ylabel("position (m)")
+        #toPlot(nFig, x, y, xlabel,ylabel, savePath, plotLegend, scatterSP, scatterAnchor, xticks)
+        aux = []
+        aux.append (col_x)
+        aux.append (col_y)
+        aux.append (col_z)
         
-        plt.legend ( [ "x", "y", "z" ] )
-    
-        plt.savefig ( path + "positions.png" )
+        toPlot(fig, range ( col_x.count()), aux, "output number","position (m)", path + "positions.pdf",
+         [ "x", "y", "z" ], -1, -1, -1)
         fig += 1
         #plt.show()
 
-        if files[cur] != "deadReckoning2" and files[cur] != "leastSquares" and files[cur] != "UWB" and files[cur] != "deadReckoning1":
+        if files[cur] != "deadReckoningACC" and files[cur] != "leastSquares" and files[cur] != "UWB" and files[cur] != "deadReckoning":
             legend.append (files[cur])
             plt.figure (0)
             plt.plot ( col_x , col_y )
-        elif deadReckoning2 == 1 and files[cur] == "deadReckoning2":
+        elif deadReckoningACC == 1 and files[cur] == "deadReckoningACC":
             legend.append (files[cur])
             plt.figure (0)
             plt.plot ( col_x , col_y )
@@ -189,28 +331,26 @@ if __name__ == '__main__':
             plt.figure (0)
             plt.plot ( col_x , col_y )
         elif uwb == 1 and files[cur] == "UWB":
+            legend.append ("Decawave")
+            plt.figure (0)
+            plt.plot ( col_x , col_y )
+        elif deadReckoning == 1 and files[cur] == "deadReckoning":
             legend.append (files[cur])
             plt.figure (0)
             plt.plot ( col_x , col_y )
-        elif deadReckoning1 == 1 and files[cur] == "deadReckoning1":
-            legend.append (files[cur])
-            plt.figure (0)
-            plt.plot ( col_x , col_y )
     
-        plt.figure(fig)
     
-        plt.plot ( col_x , col_y )
-    
-        plt.xlabel ("x (m)")
-    
-        plt.ylabel ("y (m)")
-    
-        plt.savefig ( path + "xy.png" )
-############# with SynchPoints
-        plt.scatter( synchPointX, synchPointY, color="black" )
-        plt.savefig ( path + "xySP.png" )
 
+        #toPlot(nFig, x, y, xlabel,ylabel, savePath, plotLegend, scatterSP, scatterAnchor, xticks)
+        toPlot(fig, col_x, col_y, "x (m)","y (m)", path + "xy.pdf" , -1, -1, -1, -1)
         fig += 1
+############# with SynchPoints
+        toPlot(fig, col_x, col_y, "x (m)","y (m)", path + "xySP.pdf" , -1, 1, -1, -1)
+        fig += 1
+############# with SynchPoints + Anchors
+        toPlot(fig, col_x, col_y, "x (m)","y (m)", path + "xySPAnchor.pdf" , -1, 1, 1, -1)
+        fig += 1
+
     
         id_max = [ col_x.idxmax(), col_y.idxmax(), col_z.idxmax() ]
     
@@ -237,123 +377,14 @@ if __name__ == '__main__':
 
 
     plt.figure(0)    
-    plt.xlabel ("x (m)")
-    
+    plt.xlabel ("x (m)")   
     plt.ylabel ("y (m)")
+    plt.legend ( legend, bbox_to_anchor = (0.5,1.15), loc="upper center", fancybox = True, ncol=3 )
+    plt.scatter( synchPointX, synchPointY, color="black",zorder=99 )
+    plt.savefig ( home_dir + "/AllXY.pdf" )
 
-    plt.legend ( legend )
-    plt.scatter( synchPointX, synchPointY, color="black" )
-    plt.savefig ( home_dir + "/AllXY.png" )
+    synchPointError()
 
-    file = home_dir + "/" + "synchPointError.csv"
-    df = pd.read_csv( file, sep=',')
-
-    legend = []
-
-    col_realx = df.iloc[:,21]
-    col_realy = df.iloc[:,22]
-    col_realz = df.iloc[:,23]
-
-    error = []
-
-    leastSquares = 1
-    deadReckoning1 = 0
-    
-
-    if leastSquares ==1:
-        col_LSx = df.iloc[:,3]
-        col_LSy = df.iloc[:,4]
-        col_LSz = df.iloc[:,5]
-        legend.append ("leastSquares")
-        i = 0
-        e = []
-        while i < len( col_realz):
-            e.append( math.sqrt ( (col_realx[i] - col_LSx[i])**2 +  (col_realy[i] - col_LSy[i])**2 ) )
-            i += 1
-        error.append(e)
-
-
-    col_LSMAx = df.iloc[:,6]
-    col_LSMAy = df.iloc[:,7]
-    col_LSMAz = df.iloc[:,8]
-    legend.append( "leastSquaresMA")
-    i = 0
-    e = []
-    while i < len( col_realz):
-        e.append( math.sqrt ( (col_realx[i] - col_LSMAx[i])**2 +  (col_realy[i] - col_LSMAy[i])**2 ) )
-        i += 1
-    error.append(e)
-
-    col_dRx = df.iloc[:,9]
-    col_dRy = df.iloc[:,10]
-    col_dRz = df.iloc[:,11]
-    legend.append( "deadReckoning")
-    i = 0
-    e = []
-    while i < len( col_realz):
-        e.append( math.sqrt ( (col_realx[i] - col_dRx[i])**2 +  (col_realy[i] - col_dRy[i])**2 ) )
-        i += 1
-    error.append(e)
-
-    if deadReckoning1 == 1:
-        col_dR1x = df.iloc[:,12]
-        col_dR1y = df.iloc[:,13]
-        col_dR1z = df.iloc[:,14]
-        legend.append( "deadReckoning1")
-        i = 0
-        e = []
-        while i < len( col_realz):
-            e.append( math.sqrt ( (col_realx[i] - col_dR1x[i])**2 +  (col_realy[i] - col_dR1y[i])**2 ) )
-            i += 1
-        error.append(e)
-
-    if deadReckoning2 == 1:
-        col_dR2x = df.iloc[:,15]
-        col_dR2y = df.iloc[:,16]
-        col_dR2z = df.iloc[:,17]
-        legend.append ( "deadReckoning2" )
-        i = 0
-        e = []
-        while i < len( col_realz):
-            e.append( math.sqrt ( (col_realx[i] - col_dR2x[i])**2 +  (col_realy[i] - col_dR2y[i])**2 ) )
-            i += 1
-        error.append(e)
-
-    if uwb == 1:
-        col_UWBx = df.iloc[:,18]
-        col_UWBy = df.iloc[:,19]
-        col_UWBz = df.iloc[:,20]
-        legend.append ( "uwb" )
-        i = 0
-        e = []
-        while i < len( col_realz):
-            e.append( math.sqrt ( (col_realx[i] - col_UWBx[i])**2 +  (col_realy[i] - col_UWBy[i])**2 ) )
-            i += 1
-        error.append(e)
-
-    plt.figure(fig)  
-    barWidth = 0.15
- 
-    # Set position of bar on X axis
-    br = []
-    print (error)
-
-    br = np.arange(len(error[0][:21]))
-    i = 0
-    color = ['red', 'blue', 'green', 'yellow', 'black', 'brown', 'orange']
-    while i < len (error):
-        br1 = br
-        plt.bar(br1, error[i][:21], width = barWidth, color=color[i], edgecolor ='grey', label = legend[i])
-        br = [x + barWidth for x in br1]
-        i += 1
-    #plt.bar(len(error[0]), error[0], width=barWidth, label=legend[0])
-
-    plt.xlabel('Synchronization Point number', fontweight ='bold', fontsize = 15)
-    plt.ylabel('error (m)', fontweight ='bold', fontsize = 15)
-    plt.xticks([r + barWidth for r in range(len(error[0][:21]))], range(1,len(error[0][:21])))
- 
-    plt.legend(legend)
-    plt.savefig ( home_dir + "/synchPointError.png" )
 
 
 

@@ -2,7 +2,7 @@ synchPoint synchPoint
 position leastSquares
 position leastSquaresMA
 position deadReckoning
-position deadReckoning1
-position deadReckoning2
+position deadReckoningSP
+position deadReckoningACC
 position UWB
 position real

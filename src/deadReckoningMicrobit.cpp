@@ -50,9 +50,9 @@ private:
     Augbot::position pubMsg2 = Augbot::position();
 
     ros::NodeHandle n;
-    ros::Publisher line_pub = n.advertise<Augbot::position>("deadReckoning", 1);
-    ros::Publisher line_pub1 = n.advertise<Augbot::position>("deadReckoning1", 1);
-    ros::Publisher line_pub2 = n.advertise<Augbot::position>("deadReckoning2", 1);
+    ros::Publisher line_pub = n.advertise<Augbot::position>("deadReckoningSP", 1);
+    ros::Publisher line_pub1 = n.advertise<Augbot::position>("deadReckoning", 1);
+    ros::Publisher line_pub2 = n.advertise<Augbot::position>("deadReckoningACC", 1);
 
     double deltaT;
     bool firstT;
@@ -157,19 +157,19 @@ void ImuIntegrator::ImuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
         pubMsg.y = pose.pos[1];
         pubMsg.z = pose.pos[2];
 
-        ROS_INFO ( "deadReckoning: [%f,%f,%f]", pubMsg.x, pubMsg.y, pubMsg.z);
+        ROS_INFO ( "deadReckoningSP: [%f,%f,%f]", pubMsg.x, pubMsg.y, pubMsg.z);
         
         pubMsg1.x = pose1.pos[0];
         pubMsg1.y = pose1.pos[1];
         pubMsg1.z = pose1.pos[2];
 
-        ROS_INFO ( "deadReckoning1: [%f,%f,%f]", pubMsg1.x, pubMsg1.y, pubMsg1.z);
+        ROS_INFO ( "deadReckoning: [%f,%f,%f]", pubMsg1.x, pubMsg1.y, pubMsg1.z);
 
         pubMsg2.x = pose2.pos[0];
         pubMsg2.y = pose2.pos[1];
         pubMsg2.z = pose2.pos[2];
 
-        ROS_INFO ( "deadReckoning2: [%f,%f,%f]", pubMsg2.x, pubMsg2.y, pubMsg2.z);
+        ROS_INFO ( "deadReckoningACC: [%f,%f,%f]", pubMsg2.x, pubMsg2.y, pubMsg2.z);
 
         publishMessage();
       }

@@ -2,8 +2,10 @@
 
     <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->
    <node name="deadReckoningMicrobit" pkg="Augbot" type="deadReckoningMicrobit" output="screen">
-        <param name="synchX" type="double" value="0" />
-        <param name="synchY" type="double" value="-1.5" />
+       <!-- <param name="synchX" type="double" value="0" />
+        <param name="synchY" type="double" value="-1.5" /> -->
+          <param name="synchX" type="double" value="0.6" />
+          <param name="synchY" type="double" value="-1.45" />
    </node>
 
     <!--   subscribes 'UWB' chatter, transform data and publishes 'leastSquares' chatter -->

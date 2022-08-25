@@ -1,5 +1,5 @@
 topics2rosbag:
-  type: "real"
+  type: "simulation"
   topics:
     [
 #      [ "anchorConfig", anchorConfig ],
@@ -7,9 +7,8 @@ topics2rosbag:
 [ "leastSquaresMA", position ],
 [ "UWB", tagFull ],
 [ "deadReckoning", position ],
-[ "deadReckoning1", position ],
-[ "deadReckoning2", position ],
-[ "deadReckoning3", position ],
+[ "deadReckoningSP", position ],
+[ "deadReckoningACC", position ],
 [ "imu", Imu],
 [ "synchPoints", synchPoint],
 #

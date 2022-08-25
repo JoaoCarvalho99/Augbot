@@ -190,6 +190,7 @@ if __name__ == '__main__':
 
     nSquares = 0
     while nSquares < 5:
+        rospy.loginfo ("VOLTA = " + str(nSquares))
         move()
         nSquares += 1
 

@@ -12,9 +12,9 @@ from tf2_msgs.msg import TFMessage
 topics = [[ "leastSquares", position, 0 ],
 ["leastSquaresMA", position, 1 ],
 [ "UWB", tagFull, -1 ],
-[ "deadReckoning", position, 2 ],
-[ "deadReckoning1", position, 3 ],
-[ "deadReckoning2", position, 4 ],
+[ "deadReckoningSP", position, 2 ],
+[ "deadReckoning", position, 3 ],
+[ "deadReckoningACC", position, 4 ],
 [ "synchPoints", synchPoint, -1],
 ["tf", TFMessage, -1 ]]
 
@@ -34,9 +34,9 @@ def callback( data, topic ):
     if ( topic [0] == "synchPoints" ):
         lock = 1
         synchPointErrorMsg = synchPointError()
-        synchPointErrorMsg.deadReckoning = estimations[2]
-        synchPointErrorMsg.deadReckoning1 = estimations[3]
-        synchPointErrorMsg.deadReckoning2 = estimations[4]
+        synchPointErrorMsg.deadReckoningSP = estimations[2]
+        synchPointErrorMsg.deadReckoning = estimations[3]
+        synchPointErrorMsg.deadReckoningACC = estimations[4]
         synchPointErrorMsg.synchPoint = data
         synchPointErrorMsg.real = real [nPoint]
         synchPointErrorMsg.leastSquares = estimations[0]
