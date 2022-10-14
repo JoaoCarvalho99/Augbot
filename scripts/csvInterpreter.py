@@ -25,12 +25,14 @@ files = [ 'UWB', 'deadReckoningSP', 'leastSquares', 'leastSquaresMA', 'deadRecko
 legend = []
 averages = []
 
-deadReckoningACC = 0
-deadReckoning = 1
-leastSquares = 0
-uwb = 0
+FONTSIZE = 15
 
-sim = 1
+deadReckoningACC = 0
+deadReckoning = 0
+leastSquares = 0
+uwb = 1
+
+sim = 0
 
 if sim == 1:
     synchPoints = [ [0.6,-1.4], [-0.7, -10.7], [-9.9, -9.3], [-8.6, -0.1]] #simulation
@@ -56,22 +58,38 @@ def toPlot(nFig, x, y, xlabel,ylabel, savePath, plotLegend, scatterSP, scatterAn
             plt.plot ( x, y0)
     else: 
         plt.plot (x,y)
-    plt.xlabel ( xlabel )
-    plt.ylabel( ylabel)
+    plt.xlabel ( xlabel, fontsize = FONTSIZE )
+    plt.ylabel( ylabel, fontsize = FONTSIZE )
     if xticks != -1:
-        plt.xticks ( xticks )
+        plt.xticks ( x, xticks )
     if plotLegend != -1:
         plt.legend(plotLegend, bbox_to_anchor = (0.5,1.15), loc="upper center", fancybox = True, ncol=3)
     if scatterSP == 1:
         plt.scatter( synchPointX, synchPointY, color="black",zorder=98 )
     if scatterAnchor == 1:
         plt.scatter( anchorsX, anchorsY, color = "purple", zorder = 99, marker="v",s=100)
+    plt.xticks(fontsize = FONTSIZE - 5 )
+    plt.yticks(fontsize = FONTSIZE - 4 )
     plt.savefig ( savePath )
+
+def makeXticks ( size ):
+    xticks = []
+    letter = ['A','B','C','D']
+    i = 0
+    turn = 0
+    while i < size:
+        j = 0
+        while j < 4 and i < size:
+            xticks.append ( letter[j]+str(turn) )
+            j += 1
+            i += 1
+        turn += 1
+    return xticks
 
 def synchPointError():
     global deadReckoningACC, fig, uwb
     leastSquares = 0
-    deadReckoning = 1
+    deadReckoning = 0
 
     file = home_dir + "/" + "synchPointError.csv"
     df = pd.read_csv( file, sep=',')
@@ -163,9 +181,69 @@ def synchPointError():
         i += 1
 
     #toPlot(nFig, x, y, xlabel,ylabel, savePath, plotLegend, scatterSP, scatterAnchor, xticks)
-    toPlot(fig, range(len(error[0][:21])),aux,'Synchronization Point number','error (m)', home_dir + "/synchPointError.pdf",
-     legend, -1, -1, range(len(error[0][:21])))
+    toPlot(fig, range(len(error[0][:21])),aux,'Control Point','error (m)', home_dir + "/synchPointError.pdf",
+     legend, -1, -1, makeXticks (len(error[0][:21])))
     fig += 1
+    error = []
+    legend = []
+
+    col_LSx = df.iloc[:,3]
+    col_LSy = df.iloc[:,4]
+    col_LSz = df.iloc[:,5]
+    legend.append ("leastSquares")
+    i = 0
+    e = []
+    while i < len( col_realz):
+        e.append( math.sqrt ( (col_realx[i] - col_LSx[i])**2 +  (col_realy[i] - col_LSy[i])**2 ) )
+        i += 1
+    error.append(e)
+
+    col_LSMAx = df.iloc[:,6]
+    col_LSMAy = df.iloc[:,7]
+    col_LSMAz = df.iloc[:,8]
+    legend.append( "leastSquaresMA")
+    i = 0
+    e = []
+    while i < len( col_realz):
+        e.append( math.sqrt ( (col_realx[i] - col_LSMAx[i])**2 +  (col_realy[i] - col_LSMAy[i])**2 ) )
+        i += 1
+    error.append(e)
+
+    i = 0
+    aux = []
+    while i < len (error):
+        aux.append(error[i][:21])
+        i += 1
+
+    toPlot(fig, range(len(error[0][:21])),aux,'Control Point','error (m)', home_dir + "/synchPointLSError.pdf",
+     legend, -1, -1,  makeXticks (len(error[0][:21])))
+    fig += 1
+
+    error = []
+    legend = []
+    e = []
+
+    col_dR1y = df.iloc[:,13]
+    col_dR1z = df.iloc[:,14]
+    col_dR1x = df.iloc[:,12]
+    legend.append( "deadReckoning")
+    i = 0
+    e = []
+    while i < len( col_realz):
+        e.append( math.sqrt ( (col_realx[i] - col_dR1x[i])**2 +  (col_realy[i] - col_dR1y[i])**2 ) )
+        i += 1
+    error.append(e)
+
+    i = 0
+    aux = []
+    while i < len (error):
+        aux.append(error[i][:21])
+        i += 1
+
+    toPlot(fig, range(len(error[0][:21])),aux,'Control Point','error (m)', home_dir + "/synchPointDRError.pdf",
+     legend, -1, -1,  makeXticks (len(error[0][:21])))
+    fig += 1
+
 
 
 
@@ -223,15 +301,19 @@ def error ():
 
     
     plt.figure(1)
-    plt.xlabel("time (s)")
-    plt.ylabel("error(m)")
+    plt.xlabel ("time (s)", fontsize = FONTSIZE )
+    plt.ylabel ("error(m)", fontsize = FONTSIZE )
     plt.legend ( legendError, bbox_to_anchor = (0.5,1.15), loc="upper center", fancybox = True, ncol=3 )
+    plt.xticks(fontsize = FONTSIZE - 4 )
+    plt.yticks(fontsize = FONTSIZE - 4 )
     plt.savefig ( home_dir + "/realError.pdf" )
 
     plt.figure(2)
-    plt.xlabel("time (s)")
-    plt.ylabel("error(m)")
+    plt.xlabel ("time (s)", fontsize = FONTSIZE )
+    plt.ylabel ("error(m)", fontsize = FONTSIZE )
     plt.legend ( legendError, bbox_to_anchor = (0.5,1.15), loc="upper center", fancybox = True, ncol=3 )
+    plt.xticks(fontsize = FONTSIZE - 4 )
+    plt.yticks(fontsize = FONTSIZE - 4 )
     plt.savefig ( home_dir + "/realLSError.pdf" )
 
 
@@ -377,15 +459,12 @@ if __name__ == '__main__':
 
 
     plt.figure(0)    
-    plt.xlabel ("x (m)")   
-    plt.ylabel ("y (m)")
+    plt.xlabel ("x (m)", fontsize = FONTSIZE )   
+    plt.ylabel ("y (m)", fontsize = FONTSIZE )
     plt.legend ( legend, bbox_to_anchor = (0.5,1.15), loc="upper center", fancybox = True, ncol=3 )
     plt.scatter( synchPointX, synchPointY, color="black",zorder=99 )
+    plt.xticks(fontsize = FONTSIZE - 4 )
+    plt.yticks(fontsize = FONTSIZE - 4 )
     plt.savefig ( home_dir + "/AllXY.pdf" )
 
     synchPointError()
-
-
-
-
-
