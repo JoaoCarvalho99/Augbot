@@ -6,4 +6,10 @@
     <rosparam command="load" file="$(find Augbot)/config/mqtt_params.yaml" />
     <rosparam if="$(arg use_tls)" command="load" ns="mqtt" file="$(find Augbot)/config/tls_params.yaml" />
   </node>
+
+  <node name="MQTTbridge" pkg="Augbot" type="mqttBridge.py" output="screen">
+    <rosparam command="load" file="$(find Augbot)/config/mqttBridge_params.yaml" />
+  </node>
 </launch>
+
+

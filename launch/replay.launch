@@ -1,7 +1,7 @@
 <launch>
 
     <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->
-   <node name="deadReckoningMicrobit" pkg="Augbot" type="deadReckoningMicrobit" output="screen">
+   <node name="deadReckoning" pkg="Augbot" type="deadReckoning" output="screen">
        <!-- <param name="synchX" type="double" value="0" />
         <param name="synchY" type="double" value="-1.5" /> -->
           <param name="synchX" type="double" value="0.6" />

@@ -232,27 +232,27 @@ include_directories(
 #target_link_libraries(pyReader ${catkin_LIBRARIES})
 #add_dependencies(pyReader beginner_tutorials_generate_messages_cpp)
 
-add_executable(UWB_publisher src/UWB_publisher.cpp)
-target_link_libraries(UWB_publisher ${catkin_LIBRARIES})
+add_executable(UWB_Reader src/UWB_Reader.cpp)
+target_link_libraries(UWB_Reader ${catkin_LIBRARIES})
 
-add_executable(UWB_listener src/UWB_listener.cpp)
+add_executable(UWB_listener src/old/UWB_listener.cpp)
 target_link_libraries(UWB_listener ${catkin_LIBRARIES})
 
 add_executable(deadReckoning src/deadReckoning.cpp)
 target_link_libraries(deadReckoning ${catkin_LIBRARIES})
 
-add_executable(deadReckoningMicrobit src/deadReckoningMicrobit.cpp)
-target_link_libraries(deadReckoningMicrobit ${catkin_LIBRARIES})
+add_executable(OlddeadReckoning src/old/deadReckoning.cpp)
+target_link_libraries(OlddeadReckoning ${catkin_LIBRARIES})
 
-add_executable(deadReckoningTest src/deadReckoningTest.cpp)
+add_executable(deadReckoningTest src/old/deadReckoningTest.cpp)
 target_link_libraries(deadReckoningTest ${catkin_LIBRARIES})
 
-add_executable(localization2UWB src/localization2UWB.cpp)
+add_executable(localization2UWB src/old/localization2UWB.cpp)
 target_link_libraries(localization2UWB ${catkin_LIBRARIES})
 
-add_executable(imu src/imu.cpp)
-target_link_libraries(imu ${catkin_LIBRARIES})
+add_executable(IMU_Reader src/IMU_Reader.cpp)
+target_link_libraries(IMU_Reader ${catkin_LIBRARIES})
 
-add_executable(ori src/orientation.cpp)
+add_executable(ori src/old/orientation.cpp)
 target_link_libraries(ori ${catkin_LIBRARIES})
 

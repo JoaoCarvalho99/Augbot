@@ -2,31 +2,40 @@ mqtt:
   client:
     protocol: 4      # MQTTv311
   connection:
-    host: 192.168.86.21
+    host: localhost #192.168.86.22
     port: 1883
     keepalive: 60
   private_path: device/001
 serializer: json:dumps
 deserializer: json:loads
 bridge:
-  #tagFull
+  #UWB
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: Augbot.msg:tagFull
-    topic_from: /mqtt_tagFull
-    topic_to: mqtt_tagFull
+    topic_from: /mqtt_UWB
+    topic_to: mqtt_UWB
   - factory: mqtt_bridge.bridge:MqttToRosBridge
     msg_type: Augbot.msg:tagFull
-    topic_from: mqtt_tagFull
-    topic_to: /mqtt_tagFull_output
-  #least_squares
+    topic_from: mqtt_UWB
+    topic_to: /mqtt_UWB_output
+  #leastSquares
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: Augbot.msg:position
-    topic_from: /mqtt_least_squares
-    topic_to: mqtt_least_squares
+    topic_from: /mqtt_leastSquares
+    topic_to: mqtt_leastSquares
   - factory: mqtt_bridge.bridge:MqttToRosBridge
     msg_type: Augbot.msg:position
-    topic_from: mqtt_least_squares
-    topic_to: /mqtt_least_squares_output
+    topic_from: mqtt_leastSquares
+    topic_to: /mqtt_leastSquares_output
+  #leastSquaresMA
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: Augbot.msg:position
+    topic_from: /mqtt_leastSquaresMA
+    topic_to: mqtt_leastSquaresMA
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: Augbot.msg:position
+    topic_from: mqtt_leastSquaresMA
+    topic_to: /mqtt_leastSquaresMA_output
   #deadReckoning
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: Augbot.msg:position
@@ -36,15 +45,24 @@ bridge:
     msg_type: Augbot.msg:position
     topic_from: mqtt_deadReckoning
     topic_to: /mqtt_deadReckoning_output
-  #decawave position
+  #deadReckoningSP
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: Augbot.msg:position
-    topic_from: /mqtt_dwm1001
-    topic_to: mqtt_dwm1001
+    topic_from: /mqtt_deadReckoningSP
+    topic_to: mqtt_deadReckoningSP
   - factory: mqtt_bridge.bridge:MqttToRosBridge
     msg_type: Augbot.msg:position
-    topic_from: mqtt_dwm1001
-    topic_to: /mqtt_dwm1001_output
+    topic_from: mqtt_deadReckoningSP
+    topic_to: /mqtt_deadReckoningSP_output
+  #deadReckoningACC
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: Augbot.msg:position
+    topic_from: /mqtt_deadReckoningACC
+    topic_to: mqtt_deadReckoningACC
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: Augbot.msg:position
+    topic_from: mqtt_deadReckoningACC
+    topic_to: /mqtt_deadReckoningACC_output
   #anchorConfig
   - factory: mqtt_bridge.bridge:RosToMqttBridge
     msg_type: Augbot.msg:anchorConfig
@@ -54,3 +72,30 @@ bridge:
     msg_type: Augbot.msg:anchorConfig
     topic_from: mqtt_anchorConfig
     topic_to: /mqtt_anchorConfig_output
+  #imu
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: sensor_msgs.msg:Imu
+    topic_from: /mqtt_Imu
+    topic_to: mqtt_Imu
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: sensor_msgs.msg:Imu
+    topic_from: mqtt_Imu
+    topic_to: /mqtt_Imu_output
+  #imu
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: sensor_msgs.msg:Imu
+    topic_from: /imu
+    topic_to: mqtt_Imu
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: sensor_msgs.msg:Imu
+    topic_from: mqtt_Imu
+    topic_to: /mqtt_Imu_output
+  #imu
+  - factory: mqtt_bridge.bridge:RosToMqttBridge
+    msg_type: sensor_msgs.msg:Imu
+    topic_from: imu
+    topic_to: mqtt_Imu
+  - factory: mqtt_bridge.bridge:MqttToRosBridge
+    msg_type: sensor_msgs.msg:Imu
+    topic_from: mqtt_Imu
+    topic_to: /mqtt_Imu_output

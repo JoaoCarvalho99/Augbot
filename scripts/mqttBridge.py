@@ -12,9 +12,10 @@ from logging import getLogger
 import rosgraph
 
 from Augbot.msg import *
+from sensor_msgs.msg import *
 
-#                   from mqttListener_params.yaml listens messages of type msgType from the mqtt channel listenTo
-#                   and publishes in publish/subscribe channel pubTo according to the subset defined in the .launch file
+#                   from mqttListener_params.yaml listens messages of type topic[2] from the mqtt channel topic[1]
+#                   and publishes in publish/subscribe channel topic[3] according to the subset defined in the .launch file
 
 
 logging.basicConfig(stream=sys.stderr)
@@ -49,13 +50,10 @@ def _wait_callback( callback_func ):
         print("fail")
 
 
-listenTo = ""
-pubTo = ""
-msgType = ""
-toDo = ""
+topics = []
 
 def load_yaml():
-    global pubTo,listenTo,msgType, toDo
+    global topics
 
     params = rospy.get_param("~", {})
 
@@ -64,18 +62,22 @@ def load_yaml():
     if len( params ) == 0:
         return
 
-    subset = params.get( "subset" )
+    topics = params.get( "topics" )
 
-    toDo = params.get( "toDo" )
+    print ( topics )
 
-    pubTo = params.get( toDo ).get( subset ).get( "pubTo" )
+    return topics
 
-    listenTo = params.get( toDo).get( subset ).get( "listenTo" )
+    #toDo = params.get( "toDo" )
 
-    msgType = params.get( toDo ).get( subset ).get( "msgType" )
+    #topic[3] = params.get( toDo ).get( subset ).get( "topic[3]" )
+
+    #topic[1] = params.get( toDo).get( subset ).get( "topic[1]" )
+
+    #topic[2] = params.get( toDo ).get( subset ).get( "topic[2]" )
 
 
-def listen():
+def listen(topic, ros_callback, pub):
     msg1 = None
     msg = None
     while TRUE:
@@ -85,48 +87,62 @@ def listen():
             pub.publish( msg1[0][0] )
             print("published")
             msg = msg1
+        time.sleep ( 0.1 )
 
-def callback(data):
+def callback(data, args):
+    ros_callback = args[0]
+    publisher = args[1]
     publisher.publish( data )
     _wait_callback ( ros_callback )
 
-def listener():
+def listener(topic, ros_callback, publisher):
     #publish/subscribe
-    rospy.Subscriber( listenTo, eval( msgType ), callback)
+    rospy.Subscriber( topic[1], eval( topic[2] ), callback, (ros_callback, publisher))
 
-    rospy.spin()
 
 
 if __name__ == '__main__':
     rospy.init_node( "mqttBridge" )
 
-    load_yaml()
+    topics = load_yaml()
 
-    mqtt_callback = MagicMock()
     mqttc = mqtt.Client("client-id")
     mqttc.connect("localhost", 1883)
 
-    ros_callback = MagicMock()
+    rospy.sleep ( 1 )
 
-    if toDo == "mqttListen":
-        mqttc.message_callback_add( listenTo, mqtt_callback)
-        mqttc.subscribe( listenTo )
-        mqttc.loop_start()
+    for topic in topics:
 
-        subscriber_output = rospy.Subscriber( listenTo, eval( msgType ), ros_callback)
+        if topic[0] == "mqttListen":
+            mqtt_callback = MagicMock()
+            ros_callback = MagicMock()
+            mqttc.message_callback_add( topic[1], mqtt_callback)
+            mqttc.subscribe( topic[1] )
+            mqttc.loop_start()
 
-        pub = rospy.Publisher( pubTo, eval( msgType ), queue_size=1)
+            subscriber_output = rospy.Subscriber( topic[1], eval( topic[2] ), ros_callback)
 
-        listen()
+            pub = rospy.Publisher( topic[3], eval( topic[2] ), queue_size=1)
+
+            topic.append ( ros_callback )
+            topic.append ( pub )
+
+            listen(topic, ros_callback, pub)
+
     
-    if toDo == "mqttPublish":
-        mqttc.message_callback_add( pubTo, mqtt_callback)
-        mqttc.subscribe("pubTo")
-        mqttc.loop_start()
+        if topic[0] == "mqttPublish":
+            print ( "publish from " + topic[1] + " to " + topic[3] )
+            mqtt_callback = MagicMock()
+            ros_callback = MagicMock()
+            mqttc.message_callback_add( topic[3], mqtt_callback)
+            mqttc.subscribe( topic[3] )
+            mqttc.loop_start()
+
+            subscriber = rospy.Subscriber( topic[3], eval( topic[2] ), ros_callback)
+
+            publisher = get_publisher( topic[3], eval( topic[2] ), queue_size=1)
+
+            listener(topic, ros_callback, publisher)
     
-        subscriber = rospy.Subscriber( pubTo, eval( msgType ), ros_callback)
-    
-        publisher = get_publisher( pubTo, eval( msgType ), queue_size=1)
-    
-        listener()
+    rospy.spin()
 

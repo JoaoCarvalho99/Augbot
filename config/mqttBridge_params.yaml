@@ -5,12 +5,12 @@ mqttListen:
     pubTo: "anchorConfig"
   leastSquares:
     msgType: position
-    listenTo: "/mqtt_least_squares"
-    pubTo: "least_squares"
+    listenTo: "/mqtt_leastSquares"
+    pubTo: "leastSquares"
   tagFull:
     msgType: tagFull
     listenTo: "/mqtt_tagFull"
-    pubTo: "localization"
+    pubTo: "UWB"
   leastSquares:
     msgType: position
     listenTo: "/mqtt_deadReckoning"
@@ -18,14 +18,31 @@ mqttListen:
 mqttPublish:
   leastSquares:
     msgType: position
-    listenTo: "least_squares"
-    pubTo: "/mqtt_least_squares"
+    listenTo: "leastSquares"
+    pubTo: "/mqtt_leastSquares"
   tagFull:
     msgType: tagFull
-    listenTo: "localization"
+    listenTo: "UWB"
     pubTo: "/mqtt_tagFull"
   tagFull:
     msgType: position
     listenTo: "deadReckoning"
     pubTo: "/mqtt_deadReckoning"
-  
+    type: "simulation"
+topics:
+   [
+     #["toDo","listenTo", msgType, "pubTo"]
+   #  ["/mqtt_anchorConfig_output", anchorConfig, "anchorConfig"],
+   #  ["/mqtt_leastSquares", position, "leastSquares"],
+   #  ["/mqtt_tagFull", tagFull, "/UWB"],
+     #["/mqtt_deadReckonig", position, "deadReckoning"],
+    ["mqttPublish", "leastSquares", position, "/mqtt_leastSquares"],
+    ["mqttPublish", "UWB", tagFull, "/mqtt_UWB"],
+    ["mqttPublish", "deadReckoning", position, "/mqtt_deadReckoning"],
+    ["mqttPublish", "leastSquaresMA", position, "/mqtt_leastSquaresMA"],
+    ["mqttPublish", "deadReckoningACC", position, "/mqtt_deadReckoningACC"],
+    ["mqttPublish", "deadReckoningSP", position, "/mqtt_deadReckoningSP"],
+    ["mqttPublish", "imu", Imu, "/mqtt_Imu"],
+    ["mqttListen", "/mqtt_anchorConfig", anchorConfig, "/anchorConfig"]
+   ]
+

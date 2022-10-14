@@ -2,13 +2,13 @@
 
     <!--   moves alphabot2 in gazebo   -->
    <!-- <node name="simulation_movement" pkg="Augbot" type="simulation_movement.py"></node> -->
-   <node name="simulation_movement" pkg="Augbot" type="movementSquare.py" output="screen"></node>
+   <node name="AlphaBot2Control" pkg="Augbot" type="AlphaBot2_Control.py" output="screen"></node>
 
 
     <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->
     <!-- <node name="deadReckoning" pkg="Augbot" type="deadReckoning" output="screen"></node>-->
    <!----> 
-   <node name="deadReckoningMicrobit" pkg="Augbot" type="deadReckoningMicrobit" > <!--output="screen">-->
+   <node name="deadReckoning" pkg="Augbot" type="deadReckoning" > <!--output="screen">-->
       <param name="synchX" type="double" value="0.6" />
       <param name="synchY" type="double" value="-1.45" />
    </node>  <!---->

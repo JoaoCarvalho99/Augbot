@@ -1,5 +1,5 @@
 topics2rosbag:
-  type: "simulation"
+  type: "replay"
   topics:
     [
 #      [ "anchorConfig", anchorConfig ],
