@@ -4,7 +4,7 @@
 
 - ROS distro: [ROS Noetic](http://wiki.ros.org/noetic/Installation)
 
-- Ubuntu version: Ubuntu 22.04 LTS
+- Ubuntu version: Ubuntu 20.05
 
 - Gazebo version: Gazebo 11
 
@@ -59,7 +59,7 @@ roslaunch Augbot replay.launch
 
 ### To store logs
 ```
-roslaunch Augbot writeRosbag
+roslaunch Augbot writeRosbag.launch
 ```
 
 ## ROS architecture
