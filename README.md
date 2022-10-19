@@ -10,11 +10,11 @@
 
 - Alphabot2 Ros Package and Simulator (https://github.com/ssscassio/alphabot2-simulator) (criar o meu repositorio com as minhas alteracoes?)
 
-- Hector Gazebo Plugins ()
+- Hector Gazebo Plugins (http://wiki.ros.org/hector_gazebo_plugins)
 
-- MQTT bridge ()
+- MQTT bridge (https://github.com/groove-x/mqtt_bridge)
 
-- Serial ()
+- Serial (http://wiki.ros.org/serial)
 
 Perform the full installation for the ROS Noetic that comes with Gazebo 11
 
@@ -71,7 +71,14 @@ roslaunch Augbot writeRosbag
 
 ### Description of ROS nodes
 
-- `nome`: Subscribe to `topic name` and translate it to drive control the Alphabot2.
+- `UWB_Reader`: Read data from DWM1001 sensor and publishes to `/UWB`.
+- `uwb_simulation`: Subscribe to `/tf` to simulate UWB ranges and publishes to `/UWB`.
+- `IMU_Reader`: Read data from IMU sensor and publishes to `/IMU`.
+- `deadReckoning`: Subscribe to `/IMU` and... estimates de position and publishes to `/deadReckoning`.
+- `least_squares`: Subscribe to `/UWB` and estimates de position and publishes to `/leastSquares`.
+- `AlphaBot2_Control`: Control the robot movement in the simulation and publishes to `/alphabot2/control`.
+- `writeRosbag`: Log data from ROStopics to ROSbags.
+- `mqttBridge`: Send data from ROStopics to outside of the system through MQTT.
 
 
 ### Description of ROS Topics:
