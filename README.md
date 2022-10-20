@@ -8,7 +8,7 @@
 
 - Gazebo version: Gazebo 11
 
-- Alphabot2 Ros Package and Simulator (https://github.com/ssscassio/alphabot2-simulator) (criar o meu repositorio com as minhas alteracoes?)
+- Alphabot2 Ros Package and Simulator (https://github.com/JoaoCarvalho99/alphabot2-simulator)
 
 - Hector Gazebo Plugins (http://wiki.ros.org/hector_gazebo_plugins)
 
