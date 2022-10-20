@@ -1,5 +1,9 @@
 # Augbot
 
+## Author
+
+João Carvalho, M:ERSI student, Dep. Ciência de Computadores, Faculdade de Ciências da Universidade do Porto
+
 ## Installation and Dependencies
 
 - ROS distro: [ROS Noetic](http://wiki.ros.org/noetic/Installation)
@@ -86,4 +90,3 @@ roslaunch Augbot writeRosbag.launch
 - `topic name`: funcao, `msg type`
 
 
-## João Carvalho
