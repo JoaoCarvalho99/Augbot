@@ -10,6 +10,9 @@ from threading import Lock
 from Augbot.msg import *
 from sensor_msgs.msg import *
 
+#                   from writeRosbag_params.yaml listens messages of type topic[2] from the ROStopic topic[1]
+                             
+
 topics = []
 type
 lock = Lock()

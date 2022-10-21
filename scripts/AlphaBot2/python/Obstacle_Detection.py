@@ -6,8 +6,8 @@ from AlphaBot2 import AlphaBot2
 
 from Augbot.msg import synchPoint
 
-DR = 16
-DL = 19
+DR = 16 #right infrared sensor
+DL = 19 #left infrared sensor
 BUZ = 4
 
 def beep_on():
@@ -30,7 +30,7 @@ def detect():
 			DR_status = GPIO.input(DR)
 			DL_status = GPIO.input(DL)
 #			if(DL_status == 0) or (DR_status == 0):
-			if ( DL_status == 0 ):
+			if ( DL_status == 0 ): ##left sensor detects obstacle
 				t = round(time.time() * 1000)
 				pub.publish ( synchPoint( t, t - prev_time ) )
 				beep_on()

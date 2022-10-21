@@ -1,6 +1,7 @@
 topics2rosbag:
   type: "replay"
   topics:
+  #[ROStopic, message type]
     [
 #      [ "anchorConfig", anchorConfig ],
 [ "leastSquares", position ],

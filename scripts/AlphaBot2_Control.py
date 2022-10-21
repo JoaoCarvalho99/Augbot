@@ -15,7 +15,8 @@ from gazebo_msgs.msg import ModelState
 
 from Augbot.msg import synchPoint
 
-#moves alphabot2 in the simulation in squares ( each side = 10m)
+#moves alphabot2 in the simulation in squares ( each side = 10m) -> distance in def move()
+#listens to /tf to obtain (x,y) and yaw of the robot
 
 global yaw
 global x, y

@@ -6,7 +6,9 @@ from rpi_ws281x import Adafruit_NeoPixel, Color
 from TRSensors import TRSensor
 import time, sys
 
-Button = 7
+#PID control
+
+Button = 7 #press joystick button to start moving after calibration
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -62,7 +64,7 @@ Ab = AlphaBot2()
 Ab.stop()
 print("Line follow Example")
 time.sleep(0.5)
-for i in range(0,100):
+for i in range(0,100): ##calibration cicle
 	if(i<25 or i>= 75):
 		Ab.right()
 		Ab.setPWMA(30)
@@ -75,7 +77,7 @@ for i in range(0,100):
 Ab.stop()
 print(TR.calibratedMin)
 print(TR.calibratedMax)
-while (GPIO.input(Button) != 0):
+while (GPIO.input(Button) != 0): ##waiting for joystick button to be presse
 	position,Sensors = TR.readLine()
 	print(position,Sensors)
        

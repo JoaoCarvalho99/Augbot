@@ -11,6 +11,7 @@ from tf2_msgs.msg import TFMessage
 #                                           reads position of simulated alphabot2 'tf'
 #                                           calculates ranges from the anchors to the robot's position
 #                                           sends tagFull to chatter "UWB"
+#                                           gaussian error defined in config/uwb_simulation_params.yaml
 
 
 

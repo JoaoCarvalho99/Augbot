@@ -20,6 +20,10 @@
 deadReckoning used to estimate position of alphabot2
 Listens to /imu chat imu.cpp - received by microbit (orientation - quaternion,
  linear acceleration(x,y,z) m/s² -> since microbit gives wrong acceleration, constant speed was used ( 0.15m/s) )
+
+deadReckoning -> constant speed ( 0.15 m/s )
+deadReckoningSP -> constant speed ( 0.15 m/s ), adjusts position after detection of CPA
+deadReckoningACC -> acceleration given ( only works with 0 error )
 */
 
 struct Pose

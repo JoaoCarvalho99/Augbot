@@ -15,6 +15,8 @@ from datetime import datetime
 #argv[1] = dir with csv files
 
 
+#creates plots from csv files
+
 #files = csv file names to open
 #files = [ 'UWB', 'deadReckoningSP', 'leastSquares']
 #files = ['UWB', 'deadReckoningSP', 'deadReckoning']

@@ -1,9 +1,9 @@
 uwb_simulation:
   noise:
-    mu: 0 #0.5
-    sigma: 0 #0.5
-  nAnchors: 5
-  anchors: [
+    mu: 0 #0.5 #error mean
+    sigma: 0 #0.5 #error variance
+  nAnchors: 5 #number of anchors to be used in the simulation
+  anchors: [  #position of the simulated anchors
     [-1, 2, 2],
     [2, -6, 2],
     [-2, -12, 2],
