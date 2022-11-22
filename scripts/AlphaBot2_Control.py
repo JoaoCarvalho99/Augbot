@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from tkinter import Y
 import rospy
 import math
 import numpy as np
@@ -23,7 +22,7 @@ global x, y
 global prev_time
 
 def callback(data):
-    global yaw, x, Y
+    global yaw, x, y
     w = data.transforms[0].transform.rotation.w
     z = data.transforms[0].transform.rotation.z
 
