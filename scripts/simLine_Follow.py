@@ -21,6 +21,9 @@ P = 0.6
 I = 0.00005
 D = 0
 
+startingX = 0
+startingY = 0
+
 #max_turn 0.8, thresh 0.5, speed = 0.3 funciona
 #maximum 35, maxturn 0.85, threshold 0.55, divisor 1, speed .3
 
@@ -130,12 +133,12 @@ def Reset ():
     global prev_time
     msg = ModelState()
     msg.model_name = 'alphabot2'
-    msg.pose.position.x = 0
-    msg.pose.position.y = 0.32
+    msg.pose.position.x = startingX
+    msg.pose.position.y = startingY
     msg.pose.orientation.x = 0
     msg.pose.orientation.y = 0
-    msg.pose.orientation.z = 0
-    msg.pose.orientation.w = 0
+    msg.pose.orientation.z = 0.47
+    msg.pose.orientation.w = 0.87
     msg.twist.linear.x = 0
     msg.twist.linear.y = 0
     msg.twist.linear.z = 0

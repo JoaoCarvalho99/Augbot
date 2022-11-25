@@ -2,7 +2,8 @@
 
     <!--   moves alphabot2 in gazebo   -->
    <!-- <node name="simulation_movement" pkg="Augbot" type="simulation_movement.py"></node> -->
-   <node name="AlphaBot2Control" pkg="Augbot" type="AlphaBot2_Control.py" output="screen"></node>
+  <!-- <node name="AlphaBot2Control" pkg="Augbot" type="AlphaBot2_Control.py" output="screen"></node> -->
+  <node name="simLine_Follow" pkg="Augbot" type="simLine_Follow.py" />
 
 
     <!--   estimates position of alphabot2 with deadReckoning (listens to /imu and publishes to /deadReckoning)   -->
