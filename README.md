@@ -22,7 +22,11 @@ João Carvalho, M:ERSI student, Dep. Ciência de Computadores, Faculdade de Ciê
 
 Perform the full installation for the ROS Noetic that comes with Gazebo 11
 
-## Directory Organization
+<!-- ## Directory Organization -->
+
+## MQTT configuration
+
+- scripts/mqtt_paramls.yaml: change mqtt:connection:host: field to MQTT broker's IP
 
 ## Building
 
@@ -41,6 +45,11 @@ chmod +x src/Augbot/scripts/AlphaBot2/python/*.py
 
 ## Running
 
+### First Step
+```
+roscore
+```
+
 ### AlphaBot2 Configuration
 ```
 roslaunch Augbot robot.launch
@@ -50,8 +59,7 @@ rosrun Augbot Obstacle_Detection.py
 
 ### Simulation Configuration
 ```
-roslaunch alphabot2_world spawn_world.launch
-roslaunch alphabot2_world spawn_robot.launch
+roslaunch Augbot spawnSimulation.launch
 roslaunch Augbot simulation.launch
 ```
 
@@ -66,10 +74,10 @@ roslaunch Augbot replay.launch
 roslaunch Augbot writeRosbag.launch
 ```
 
-## ROS architecture
+<!-- ## ROS architecture
 
 ![Rosgraph]
-(adicionar ROSgraphs
+(adicionar ROSgraphs) -->
 
 
 
@@ -85,8 +93,8 @@ roslaunch Augbot writeRosbag.launch
 - `mqttBridge`: Send data from ROStopics to outside of the system through MQTT.
 
 
-### Description of ROS Topics:
+<!-- ### Description of ROS Topics:
 
-- `topic name`: funcao, `msg type`
+- `topic name`: funcao, `msg type` (todo) -->
 
 
