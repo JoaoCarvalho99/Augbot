@@ -125,9 +125,9 @@ roslaunch Augbot replay.launch
 roslaunch Augbot writeRosbag.launch
 ```
 
-<!-- ## ROS architecture
+## ROS architecture
 
-![Rosgraph]
+<!-- ![Rosgraph]
 (adicionar ROSgraphs) -->
 
 
@@ -144,8 +144,12 @@ roslaunch Augbot writeRosbag.launch
 - `mqttBridge`: Send data from ROStopics to outside of the system through MQTT.
 
 
-<!-- ### Description of ROS Topics:
-
-- `topic name`: funcao, `msg type` (todo) -->
+### Description of ROS Topics:
+- (topic_name: message_type)
+- `/UWB`: `tagFull`
+- `/deadReckoning`: `position`
+- `/leastSquares`: `position`
+- `/IMU`: `sensor_msgs/Imu`
+- `/alphabot2/control`: `geometry_msgs/Twist`
 
 
