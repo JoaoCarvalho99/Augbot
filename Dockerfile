@@ -35,6 +35,7 @@ RUN source devel/setup.bash
 RUN chmod +x src/Augbot/scripts/*.py
 RUN chmod +x src/Augbot/scripts/AlphaBot2/python/*.py
 RUN chmod +x src/alphabot2-simulator/**/*.py
-RUN roscore &
-RUN roslaunch Augbot spawnSimulation.launch &
-RUN roslaunch Augbot simulation.launch &
+#To launch simulation
+#RUN roscore &
+#RUN roslaunch Augbot spawnSimulation.launch &
+#RUN roslaunch Augbot simulation.launch &
