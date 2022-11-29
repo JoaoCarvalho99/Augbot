@@ -73,10 +73,6 @@ cd ~/catkin_ws
 sudo source devel/setup.bash
 sudo chmod +x src/alphabot2-simulator/**/*.py
 ```
-
-
-Perform the full installation for the ROS Noetic that comes with Gazebo 11
-
 <!-- ## Directory Organization -->
 
 ## MQTT configuration
