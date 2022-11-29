@@ -30,37 +30,37 @@ João Carvalho, M:ERSI student, Dep. Ciência de Computadores, Faculdade de Ciê
 
 - mosquitto (https://mosquitto.org/)
 
-# Setup your sources.list
+#### Setup your sources.list
 ```
 sudo apt-get update && apt-get install -y lsb-release && apt-get clean all
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 ```
-# Set up your keys
+#### Set up your keys
 ```
 sudo apt install curl
 curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
 ```
-# INSTALLATION
+#### INSTALLATION
 ```
 sudo apt update
 sudo apt install ros-noetic-desktop-full
 ```
-# Environment setup
+#### Environment setup
 ```
 sudo echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc && source ~/.bashrc
 ```
-# Dependencies for building packages
+#### Dependencies for building packages
 ```
 sudo apt install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential git
 sudo apt install python3-rosdep
 sudo rosdep init
 sudo rosdep update
 ```
-# BUILDING 
+#### BUILDING 
 ```
 sudo mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src
 ```
-# DEPENDENCIES
+#### DEPENDENCIES
 ```
 cd ~/catkin_ws/src
 sudo git clone https://github.com/JoaoCarvalho99/alphabot2-simulator.git
