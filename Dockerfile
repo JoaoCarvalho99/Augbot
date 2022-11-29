@@ -20,11 +20,13 @@ RUN rosdep update
 RUN mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src
 RUN git clone https://github.com/JoaoCarvalho99/Augbot.git
 RUN git clone https://github.com/JoaoCarvalho99/alphabot2-simulator.git
-RUN git clone https://github.com/tu-darmstadt-ros-pkg/hector_gazebo.git
-RUN git clone https://github.com/groove-x/mqtt_bridge.git
+RUN apt install ros-noetic-hector-gazebo-plugins
+#git clone https://github.com/tu-darmstadt-ros-pkg/hector_gazebo.git
+#RUN git clone https://github.com/groove-x/mqtt_bridge.git
 RUN apt install python3-pip ros-noetic-rosbridge-library mosquitto mosquitto-clients nlohmann-json3-dev 
 RUN pip install paho-mqtt mock scipy
-RUN git clone https://github.com/wjwwood/serial.git
+RUN apt install ros-noetic-serial
+#git clone https://github.com/wjwwood/serial.git
 RUN cd serial
 RUN make
 RUN make doc
