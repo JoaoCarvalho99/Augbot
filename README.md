@@ -20,6 +20,17 @@ João Carvalho, M:ERSI student, Dep. Ciência de Computadores, Faculdade de Ciê
 
 - Serial (http://wiki.ros.org/serial)
 
+- scipy (https://scipy.org/)
+
+- paho (https://pypi.org/project/paho-mqtt/)
+
+- nlohmann-json (https://pypi.org/project/paho-mqtt/)
+
+- mock (https://pypi.org/project/mock/)
+
+- mosquitto (https://mosquitto.org/)
+
+
 Perform the full installation for the ROS Noetic that comes with Gazebo 11
 
 <!-- ## Directory Organization -->
