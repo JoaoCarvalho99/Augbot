@@ -24,7 +24,7 @@ João Carvalho, M:ERSI student, Dep. Ciência de Computadores, Faculdade de Ciê
 
 - paho (https://pypi.org/project/paho-mqtt/)
 
-- nlohmann-json (https://pypi.org/project/paho-mqtt/)
+- nlohmann-json (https://github.com/nlohmann/json)
 
 - mock (https://pypi.org/project/mock/)
 
